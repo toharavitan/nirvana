@@ -162,10 +162,20 @@ export interface ScrollVideoSource {
  * boundaries at ≈0.12, ≈0.25, ≈0.37, ≈0.50, ≈0.62, ≈0.75 and ≈0.87 of the
  * playhead, which ScrollVideo's overlay timing is written against.
  */
+/**
+ * Both renditions live in Cloudflare R2, not /public — at 92MB and 30MB they
+ * exceed Workers' 25MB static-asset limit, so they can't ship as part of the
+ * deployment bundle the way the rest of the site's media does. The poster
+ * stays local: at 483KB it's nowhere near that limit, and serving the
+ * above-the-fold LCP image from the same origin avoids an extra cross-origin
+ * connection on first paint.
+ */
+const R2_MEDIA_BASE = "https://pub-4d4835c1f9de4a00b4b4f26a88a7db6a.r2.dev";
+
 export const VIDEO: Record<"journey", ScrollVideoSource> = {
   journey: {
-    desktop: "/videos/journey-desktop.mp4",
-    mobile: "/videos/journey-mobile.mp4",
+    desktop: `${R2_MEDIA_BASE}/journey-desktop.mp4`,
+    mobile: `${R2_MEDIA_BASE}/journey-mobile.mp4`,
     poster: "/videos/journey-poster.webp",
     duration: 39.75,
     description:

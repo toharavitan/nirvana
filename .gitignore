@@ -43,8 +43,13 @@ yarn-error.log*
 # matched unanchored so it's excluded wherever it ends up.
 pngs/
 *.mp4
-!/public/videos/*.mp4
 .tmp-frames
+
+# The two journey renditions are generated locally by prepare-videos.mjs for
+# dev, but at 92MB/30MB they exceed Cloudflare Workers' 25MB static-asset
+# limit — production serves them from R2 (see R2_MEDIA_BASE in media.ts), not
+# from this repo. No `!` exemption for /public/videos/*.mp4 anymore: if that
+# script is re-run, its output should stay local-only, not get committed.
 
 # vercel
 .vercel

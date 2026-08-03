@@ -21,6 +21,13 @@
  * clip's aspect, which only ever renders full-bleed under object-cover.
  *
  * Run with `node scripts/prepare-videos.mjs`. Safe to re-run.
+ *
+ * Output lands in public/videos/ for local dev, but journey-desktop.mp4 and
+ * journey-mobile.mp4 are gitignored — at 92MB/30MB they're over Cloudflare
+ * Workers' 25MB static-asset limit, so production serves them from R2
+ * instead (see R2_MEDIA_BASE in src/content/media.ts). Re-running this
+ * script after a source change means re-uploading those two files to the R2
+ * bucket by hand — nothing does that automatically.
  */
 import { execFile } from "node:child_process";
 import { mkdir, readdir, stat } from "node:fs/promises";
