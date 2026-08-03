@@ -1,17 +1,18 @@
-import path from "node:path";
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    // The LeadStrikes folder, not this project.
+    // Pinned explicitly rather than left to auto-detection: a stray lockfile
+    // above this project (in a parent or home directory, depending on
+    // machine) makes Next infer the wrong workspace root otherwise.
     //
-    // Two constraints meet here. A stray lockfile in the user's home directory
-    // makes Next infer the wrong workspace root, so it has to be pinned. But
-    // @leadstrikes/motion-engine is installed via `file:` and symlinks out to a
-    // sibling directory — pinning the root any tighter than the shared parent
-    // puts the engine outside it and Turbopack cannot resolve the import.
-    root: path.resolve(__dirname, "../.."),
+    // Previously pinned two levels up, because @leadstrikes/motion-engine was
+    // a `file:` dependency symlinked to a sibling directory outside this
+    // project — which made the whole app unbuildable anywhere but this one
+    // machine (a fresh clone, or a CI/deploy runner, has no such sibling
+    // folder). The engine is now vendored into ./vendor/motion-engine, inside
+    // the project, so the root only needs to cover this directory.
+    root: __dirname,
   },
 };
 

@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@leadstrikes/motion-engine": "file:../../leadstrikes-motion-engine",
+    "@leadstrikes/motion-engine": "file:./vendor/motion-engine",
     "@radix-ui/react-select": "^2.3.7",
     "clsx": "^2.1.1",
     "gsap": "^3.15.0",

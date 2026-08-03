@@ -94,11 +94,19 @@ function CalendarDayButton({ className, day, modifiers, ...props }: DayButtonPro
     if (modifiers.focused) ref.current?.focus();
   }, [modifiers.focused]);
 
+  // ISO, built by hand rather than via toLocaleDateString(): that method
+  // resolves to whatever locale the runtime defaults to, which differs
+  // between the server (Node) and the browser — server and client then
+  // render different strings for the same Date and React flags the whole
+  // subtree as a hydration mismatch. Plain get*() calls have no locale to
+  // disagree about.
+  const iso = `${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, "0")}-${String(day.date.getDate()).padStart(2, "0")}`;
+
   return (
     <button
       ref={ref}
       type="button"
-      data-day={day.date.toLocaleDateString()}
+      data-day={iso}
       data-selected-single={
         modifiers.selected &&
         !modifiers.range_start &&
