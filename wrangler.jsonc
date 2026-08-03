@@ -1,8 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nirvana-tamarindo",
+  // Must match the Worker name Cloudflare's Git integration created
+  // (which follows the repo name) — a mismatch here makes every deploy
+  // open a reconciliation PR against the repo instead of just deploying.
+  "name": "nirvana",
   "main": ".open-next/worker.js",
-  "compatibility_date": "2026-08-04",
+  // A fixed past date, not "today" — Cloudflare's deploy API validates this
+  // against its own real clock and rejects anything it considers future,
+  // which ruled out using the actual current date here.
+  "compatibility_date": "2024-09-23",
   // Required: the /api/inquiry route runs under the Next.js "nodejs" runtime
   // (it uses node:fs/promises for a best-effort local mirror of bookings).
   // This flag is what makes those Node built-ins resolve on Workers at all —
