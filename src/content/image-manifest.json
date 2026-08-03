@@ -1,0 +1,192 @@
+[
+  {
+    "slug": "aerial-tamarindo",
+    "width": 1440,
+    "height": 1080
+  },
+  {
+    "slug": "bathroom-double",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "bathroom-guest",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "bathroom-shower",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "bathroom-vanity",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "bedroom-ensuite",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "bedroom-garden",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "bedroom-hall",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "bedroom-king",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "bedroom-poolside",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "bedroom-second",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "bedroom-terrace",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "bedroom-window-seat",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "desk-nook",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "entrance-gate",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "entrance-sign",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "garden-path",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "indoor-outdoor",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "kitchen",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "kitchen-detail",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "kitchen-living",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "kitchen-open",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "living-detail",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "living-dining",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "living-room",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "palm-path",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "palm-walkway",
+    "width": 1440,
+    "height": 2160
+  },
+  {
+    "slug": "pool-daybed",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "pool-dusk",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "pool-palapa",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "pool-villa-day",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "shower-detail",
+    "width": 1440,
+    "height": 2160
+  },
+  {
+    "slug": "street-frontage",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "terrace-chairs",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "terrace-pool",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "terrace-seating",
+    "width": 1440,
+    "height": 960
+  },
+  {
+    "slug": "utility-laundry",
+    "width": 2400,
+    "height": 1600
+  },
+  {
+    "slug": "villa-gate",
+    "width": 1440,
+    "height": 960
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nirvana-tamarindo",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-08-04",
+  // Required: the /api/inquiry route runs under the Next.js "nodejs" runtime
+  // (it uses node:fs/promises for a best-effort local mirror of bookings).
+  // This flag is what makes those Node built-ins resolve on Workers at all —
+  // without it the route fails to load, not just the fs calls inside it.
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
