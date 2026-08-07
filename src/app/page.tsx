@@ -1,5 +1,6 @@
 import { Details } from "@/components/sections/Details";
 import { Essence } from "@/components/sections/Essence";
+import { FieldNotes } from "@/components/sections/FieldNotes";
 import { Gallery } from "@/components/sections/Gallery";
 import { Hero } from "@/components/sections/Hero";
 import { Inquiry } from "@/components/sections/Inquiry";
@@ -19,6 +20,7 @@ import { SiteNav } from "@/components/ui/SiteNav";
  *   Details     the practical answers, on the dark ground
  *   Gallery     everything the narrative didn't have room for
  *   Location    the aerial: how close the beach actually is
+ *   FieldNotes  a step back from the villa — the region, in specimens
  *   Inquiry     the ask, at dusk
  *
  * The two source clips were shot as one continuous camera move, and the site
@@ -37,6 +39,7 @@ export default function Home() {
         <Details />
         <Gallery />
         <Location />
+        <FieldNotes />
         <Inquiry />
       </main>
 

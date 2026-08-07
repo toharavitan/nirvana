@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef } from "react";
 
 import {
@@ -7,7 +8,7 @@ import {
   EASING,
   STAGGER,
   fadeIn,
-  textReveal,
+  reveal,
   useGSAPAnimation,
   useScrollTo,
 } from "@leadstrikes/motion-engine";
@@ -16,6 +17,8 @@ import { ScrollVideo } from "@/components/motion/ScrollVideo";
 import { Container } from "@/components/ui/Container";
 import { VIDEO } from "@/content/media";
 import { hero, threshold } from "@/content/site";
+
+import nirvanaWordmark from "@/assets/nirvana-wordmark.png";
 
 /**
  * The opening move, unbroken.
@@ -33,10 +36,13 @@ export function Hero() {
 
   useGSAPAnimation(() => {
     // Entrance only — the scroll-linked behaviour belongs to ScrollVideo.
-    const cleanup = textReveal(".hero-title", {
-      split: "chars",
+    // The wordmark is now the logo's own artwork rather than live text, so it
+    // can't be split into characters; a single rise-and-fade stands in for
+    // the previous per-letter cascade.
+    reveal(".hero-title", {
+      direction: "up",
+      distance: 24,
       duration: DURATION.reveal,
-      stagger: STAGGER.tight,
       ease: EASING.dramatic,
     });
 
@@ -45,8 +51,6 @@ export function Hero() {
       delay: 0.7,
       stagger: STAGGER.base,
     });
-
-    return cleanup;
   }, { scope });
 
   return (
@@ -88,8 +92,24 @@ export function Hero() {
             {hero.eyebrow}
           </p>
 
-          <h1 className="hero-title relative mt-6 font-display text-[length:var(--text-display)] font-light leading-[0.9] tracking-[0.06em] text-bone uppercase [text-shadow:0_2px_60px_rgba(20,25,26,0.7)]">
-            {hero.title}
+          {/*
+            The logo's own wordmark artwork rather than live text set in the
+            site's serif — matches the mark exactly rather than approximating
+            its (likely bespoke) lettering with a web font. Sized against the
+            same clamp() the live text used, so it holds the same responsive
+            scale the design already tuned. The tight drop-shadow (in addition
+            to the shade pool behind it) is deliberately closer and darker
+            than the site's usual text-shadow: these are hairline strokes, and
+            a soft wide shadow alone wasn't enough to hold them against bright
+            footage.
+          */}
+          <h1 className="hero-title relative mt-6">
+            <Image
+              src={nirvanaWordmark}
+              alt={hero.title}
+              priority
+              className="h-[clamp(3rem,11vw,10rem)] w-auto [filter:drop-shadow(0_2px_50px_rgba(20,25,26,0.75))_drop-shadow(0_0_14px_rgba(20,25,26,0.65))]"
+            />
           </h1>
 
           <p

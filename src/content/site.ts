@@ -160,6 +160,25 @@ export const location = {
   ],
 } as const;
 
+export const fieldNotes = {
+  eyebrow: "Field notes",
+  headline: "Guanacaste keeps its own record.",
+  // TODO(client): the second sentence of the first paragraph is a plausible
+  // stand-in — confirm whether wild guaria morada is actually still found
+  // locally, and name the spot if so. The 1939 date and the 1880s survey are
+  // verifiable public fact and safe to keep as written.
+  body: [
+    "The guaria morada — Costa Rica's national flower since 1939 — is an " +
+      "orchid native to this coast, and still turns up wild on old fence " +
+      "posts and shade trees around town.",
+    "The province was first surveyed in any real detail in the 1880s, when " +
+      "Guanacaste's boundary was still being drawn on paper. The coastline it " +
+      "traced has changed very little since: the same bay, the same reef " +
+      "break, the same run of sand.",
+  ],
+  caption: "Guanacaste, in fragments",
+} as const;
+
 export const inquiry = {
   eyebrow: "Reservations",
   headline: "Come and stay.",

@@ -1,5 +1,9 @@
+import Image from "next/image";
+
 import { Container } from "@/components/ui/Container";
 import { hero, nav, site } from "@/content/site";
+
+import nirvanaLogo from "@/assets/nirvana-logo.png";
 
 /**
  * The colophon. The wordmark runs at plate scale — the last thing the visitor
@@ -18,10 +22,13 @@ export function SiteFooter() {
 
         <div className="mt-16 grid gap-12 border-t border-bone/10 pt-14 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-display text-xl font-light uppercase tracking-[0.28em]">
-              {site.name}
-            </p>
-            <p className="mt-3 font-sans text-sm font-light leading-relaxed text-bone/50">
+            <Image
+              src={nirvanaLogo}
+              alt={site.fullName}
+              className="h-16 w-auto"
+              priority={false}
+            />
+            <p className="mt-4 font-sans text-sm font-light leading-relaxed text-bone/50">
               {site.tagline}
             </p>
           </div>

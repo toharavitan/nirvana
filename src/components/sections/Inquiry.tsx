@@ -109,7 +109,7 @@ export function Inquiry() {
       <Container className="relative py-32 sm:py-44">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
           <header className="lg:col-span-5">
-            <Eyebrow index="06" className="text-bone/60">
+            <Eyebrow index="07" className="text-bone/60">
               {inquiry.eyebrow}
             </Eyebrow>
 
