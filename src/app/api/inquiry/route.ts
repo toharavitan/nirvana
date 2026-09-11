@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { appendFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
@@ -11,12 +12,23 @@ import { NextResponse } from "next/server";
  * don't return CORS headers, so a `fetch` straight from the page fails in the
  * browser even when the same request succeeds from curl.
  *
+ * The second reason is the JWT. Signing has to happen somewhere the shared
+ * secret can live, and anything shipped to the browser is public — a token
+ * minted client-side would hand every visitor the ability to post whatever
+ * they liked to the n8n workflow.
+ *
  * Configuration lives in the environment, in one place:
  *
- *   INQUIRY_WEBHOOK_URL     the n8n production webhook (`/webhook/...`, not
- *                           `/webhook-test/...` — the test URL is single-shot
- *                           and 404s until you click "Listen" again)
- *   INQUIRY_WEBHOOK_SECRET  optional; sent as `X-Webhook-Secret`
+ *   INQUIRY_WEBHOOK_URL         the n8n production webhook (`/webhook/...`, not
+ *                               `/webhook-test/...` — the test URL is
+ *                               single-shot and 404s until you click "Listen"
+ *                               again)
+ *   INQUIRY_WEBHOOK_JWT_SECRET  optional; when set, each request carries a
+ *                               freshly signed HS256 bearer token. Must match
+ *                               the secret on n8n's JWT Auth credential.
+ *   INQUIRY_WEBHOOK_SECRET      optional; sent as `X-Webhook-Secret`. Predates
+ *                               the JWT and is kept for receivers that check
+ *                               a plain shared header instead.
  */
 
 export const runtime = "nodejs";
@@ -24,6 +36,10 @@ export const dynamic = "force-dynamic";
 
 const WEBHOOK_URL = process.env.INQUIRY_WEBHOOK_URL;
 const WEBHOOK_SECRET = process.env.INQUIRY_WEBHOOK_SECRET;
+const WEBHOOK_JWT_SECRET = process.env.INQUIRY_WEBHOOK_JWT_SECRET;
+
+/** Seconds a minted token stays valid. Short: it is used immediately. */
+const JWT_TTL_SECONDS = 300;
 
 /** Where submissions are mirrored locally, so nothing is lost if n8n is down. */
 const LOG_DIR = path.join(process.cwd(), "data");
@@ -39,6 +55,43 @@ interface InquiryPayload {
 }
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Mints an HS256 JWT.
+ *
+ * Hand-rolled rather than pulling in `jsonwebtoken`: HS256 is a base64url
+ * header, a base64url payload, and an HMAC over the two joined by a dot.
+ * Signing is the easy half of JWT — the part worth a library is *verifying*
+ * one, which is n8n's job here, not ours.
+ */
+function signJwt(payload: Record<string, unknown>, secret: string): string {
+  const encode = (value: object) =>
+    Buffer.from(JSON.stringify(value)).toString("base64url");
+
+  const signingInput = `${encode({ alg: "HS256", typ: "JWT" })}.${encode(payload)}`;
+  const signature = createHmac("sha256", secret)
+    .update(signingInput)
+    .digest("base64url");
+
+  return `${signingInput}.${signature}`;
+}
+
+/**
+ * Nights between two `YYYY-MM-DD` dates.
+ *
+ * Both sides are parsed as midnight UTC so the subtraction can't be thrown off
+ * by a DST boundary falling inside the stay.
+ */
+function nightsBetween(arrival?: string, departure?: string): number | undefined {
+  if (!arrival || !departure) return undefined;
+
+  const from = Date.parse(`${arrival}T00:00:00Z`);
+  const to = Date.parse(`${departure}T00:00:00Z`);
+
+  if (Number.isNaN(from) || Number.isNaN(to) || to <= from) return undefined;
+
+  return Math.round((to - from) / 86_400_000);
+}
 
 function validate(body: unknown): { data: InquiryPayload } | { error: string } {
   if (typeof body !== "object" || body === null) {
@@ -100,6 +153,9 @@ export async function POST(request: Request) {
 
   const record = {
     ...result.data,
+    // Derived here rather than in n8n so the workflow doesn't have to do date
+    // maths to answer the first question any booking raises.
+    nights: nightsBetween(result.data.arrival, result.data.departure),
     submittedAt: new Date().toISOString(),
     source: "nirvana-tamarindo.com",
   };
@@ -117,11 +173,33 @@ export async function POST(request: Request) {
 
   let webhookStatus: number | string;
 
+  // Minted per request and valid for minutes, so a token captured in transit
+  // is worthless almost immediately.
+  const now = Math.floor(Date.now() / 1000);
+  const token = WEBHOOK_JWT_SECRET
+    ? signJwt(
+        {
+          iss: "nirvana-tamarindo.com",
+          sub: "booking-inquiry",
+          iat: now,
+          exp: now + JWT_TTL_SECONDS,
+        },
+        WEBHOOK_JWT_SECRET,
+      )
+    : null;
+
+  if (!token) {
+    console.warn(
+      "[inquiry] INQUIRY_WEBHOOK_JWT_SECRET is not set — posting unauthenticated.",
+    );
+  }
+
   try {
     const response = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(WEBHOOK_SECRET ? { "X-Webhook-Secret": WEBHOOK_SECRET } : {}),
       },
       body: JSON.stringify(record),
