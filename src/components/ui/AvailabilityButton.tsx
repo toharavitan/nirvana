@@ -12,10 +12,13 @@ import {
 } from "@leadstrikes/motion-engine";
 
 /**
- * The one persistent action on the page: a calendar that takes the visitor
+ * The slower of the two persistent actions: a calendar that takes the visitor
  * to the inquiry form. Ink and bone rather than a third-party green — it
  * belongs to the house, not to a messaging app. The label slides in a beat
  * after the icon, the way a concierge waits for you to look up.
+ *
+ * Positioning belongs to FloatingActions, which stacks this under the
+ * WhatsApp button.
  */
 export function AvailabilityButton() {
   const scope = useRef<HTMLDivElement>(null);
@@ -37,7 +40,7 @@ export function AvailabilityButton() {
   }, { scope });
 
   return (
-    <div ref={scope} className="fixed bottom-6 right-6 z-50 sm:bottom-8 sm:right-8">
+    <div ref={scope}>
       <button
         type="button"
         onClick={() => scrollTo("#inquire")}

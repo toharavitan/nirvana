@@ -7,7 +7,7 @@ import { Inquiry } from "@/components/sections/Inquiry";
 import { Location } from "@/components/sections/Location";
 import { SiteFooter } from "@/components/sections/SiteFooter";
 import { Villas } from "@/components/sections/Villas";
-import { AvailabilityButton } from "@/components/ui/AvailabilityButton";
+import { FloatingActions } from "@/components/ui/FloatingActions";
 import { SiteNav } from "@/components/ui/SiteNav";
 
 /**
@@ -44,7 +44,7 @@ export default function Home() {
       </main>
 
       <SiteFooter />
-      <AvailabilityButton />
+      <FloatingActions />
     </>
   );
 }

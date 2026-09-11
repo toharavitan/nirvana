@@ -24,6 +24,14 @@
 
   --color-lagoon: #2f93a8;
 
+  /*
+    WhatsApp's own green, deliberately outside the house palette. The button
+    borrows the platform's recognition, and recognition is the colour — a
+    tasteful ink version of it is just an unfamiliar circle.
+  */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-deep: #1da851;
+
   --font-display: var(--font-cormorant);
   --font-sans: var(--font-inter);
 
