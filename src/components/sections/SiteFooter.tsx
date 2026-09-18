@@ -79,23 +79,38 @@ export function SiteFooter() {
               The property
             </p>
             <ul className="mt-4 flex flex-col gap-2 font-sans text-sm font-light text-bone/60">
-              {nav.map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="w-fit transition-colors hover:text-bone"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
+              {nav.map((item) => {
+                // A menu item (Villas) points at its first villa page; hash
+                // targets live on the home page, so prefix them with "/" to
+                // resolve from any route; path links pass through unchanged.
+                const href = item.menu
+                  ? item.menu[0].href
+                  : item.href.startsWith("#")
+                    ? `/${item.href}`
+                    : item.href;
+                return (
+                  <li key={item.label}>
+                    <a
+                      href={href}
+                      className="w-fit transition-colors hover:text-bone"
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
 
-        <p className="mt-16 border-t border-bone/10 pt-8 font-sans text-xs font-light text-bone/30">
-          © {new Date().getFullYear()} {site.fullName}. All rights reserved.
-        </p>
+        <div className="mt-16 flex flex-col gap-4 border-t border-bone/10 pt-8 font-sans text-xs font-light text-bone/30 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {site.fullName}. All rights reserved.
+          </p>
+          <a href="/terms" className="w-fit transition-colors hover:text-bone/60">
+            Terms &amp; Conditions
+          </a>
+        </div>
       </Container>
     </footer>
   );

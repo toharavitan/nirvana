@@ -142,19 +142,28 @@ export function Villas() {
   useGSAPAnimation(() => {
     const cleanup = textReveal(".villas-headline", { split: "lines", scroll: true });
     reveal(".villas-eyebrow", { scroll: true });
+    reveal(".villas-intro", { stagger: STAGGER.base, scroll: true });
     return cleanup;
   }, { scope });
 
   return (
     <section ref={scope} className="bg-sand py-28 sm:py-40" id="villas">
       <Container width="wide">
-        <header className="max-w-2xl">
+        <header className="max-w-3xl">
           <Eyebrow index="02" className="villas-eyebrow" data-reveal>
             {villa.eyebrow}
           </Eyebrow>
           <Headline accent={2} className="villas-headline mt-6 text-ink">
             {villa.headline}
           </Headline>
+
+          <div className="mt-8 space-y-6">
+            {villa.intro.map((paragraph) => (
+              <Lead key={paragraph.slice(0, 24)} className="villas-intro" data-reveal>
+                {paragraph}
+              </Lead>
+            ))}
+          </div>
         </header>
 
         <div className="mt-24 space-y-32 sm:mt-32 sm:space-y-44">

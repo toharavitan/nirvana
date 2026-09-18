@@ -1,14 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
 
 import {
   DURATION,
-  EASING,
   STAGGER,
   fadeIn,
-  reveal,
   useGSAPAnimation,
   useScrollTo,
 } from "@leadstrikes/motion-engine";
@@ -16,9 +13,7 @@ import {
 import { ScrollVideo } from "@/components/motion/ScrollVideo";
 import { Container } from "@/components/ui/Container";
 import { VIDEO } from "@/content/media";
-import { hero, threshold } from "@/content/site";
-
-import nirvanaWordmark from "@/assets/nirvana-wordmark.png";
+import { hero, site, threshold } from "@/content/site";
 
 /**
  * The opening move, unbroken.
@@ -35,17 +30,9 @@ export function Hero() {
   const scrollTo = useScrollTo();
 
   useGSAPAnimation(() => {
-    // Entrance only — the scroll-linked behaviour belongs to ScrollVideo.
-    // The wordmark is now the logo's own artwork rather than live text, so it
-    // can't be split into characters; a single rise-and-fade stands in for
-    // the previous per-letter cascade.
-    reveal(".hero-title", {
-      direction: "up",
-      distance: 24,
-      duration: DURATION.reveal,
-      ease: EASING.dramatic,
-    });
-
+    // Entrance only — the scroll-linked behaviour belongs to ScrollVideo. The
+    // hero no longer carries a title (the nav wordmark stands in), so the
+    // eyebrow, subtitle and call to action simply fade up over the footage.
     fadeIn(".hero-meta", {
       duration: DURATION.slow,
       delay: 0.7,
@@ -92,25 +79,9 @@ export function Hero() {
             {hero.eyebrow}
           </p>
 
-          {/*
-            The logo's own wordmark artwork rather than live text set in the
-            site's serif — matches the mark exactly rather than approximating
-            its (likely bespoke) lettering with a web font. Sized against the
-            same clamp() the live text used, so it holds the same responsive
-            scale the design already tuned. The tight drop-shadow (in addition
-            to the shade pool behind it) is deliberately closer and darker
-            than the site's usual text-shadow: these are hairline strokes, and
-            a soft wide shadow alone wasn't enough to hold them against bright
-            footage.
-          */}
-          <h1 className="hero-title relative mt-6">
-            <Image
-              src={nirvanaWordmark}
-              alt={hero.title}
-              priority
-              className="h-[clamp(3rem,11vw,10rem)] w-auto [filter:drop-shadow(0_2px_50px_rgba(20,25,26,0.75))_drop-shadow(0_0_14px_rgba(20,25,26,0.65))]"
-            />
-          </h1>
+          {/* The name is shown by the nav logo now; kept here only as the
+              page's accessible/SEO heading, visually hidden. */}
+          <h1 className="sr-only">{site.fullName}</h1>
 
           <p
             className="hero-meta relative mt-6 max-w-md font-sans text-base font-light leading-relaxed text-bone/85 text-pretty [text-shadow:0_1px_20px_rgba(20,25,26,0.8)]"
@@ -121,7 +92,7 @@ export function Hero() {
 
           <button
             type="button"
-            onClick={() => scrollTo("#villas")}
+            onClick={() => scrollTo("#story")}
             className="hero-meta relative mt-10 cursor-pointer border border-bone/40 px-8 py-3.5 font-sans text-[0.68rem] uppercase tracking-[0.28em] text-bone transition-all duration-300 hover:border-teak-light hover:bg-teak-light hover:text-ink"
             data-reveal
           >

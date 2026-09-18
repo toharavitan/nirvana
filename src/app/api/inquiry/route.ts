@@ -48,6 +48,7 @@ const LOG_FILE = path.join(LOG_DIR, "inquiries.jsonl");
 interface InquiryPayload {
   name: string;
   email: string;
+  villa?: string;
   arrival?: string;
   departure?: string;
   guests?: string;
@@ -115,6 +116,7 @@ function validate(body: unknown): { data: InquiryPayload } | { error: string } {
     data: {
       name,
       email,
+      villa: str("villa") || undefined,
       arrival: str("arrival") || undefined,
       departure: str("departure") || undefined,
       guests: str("guests") || undefined,

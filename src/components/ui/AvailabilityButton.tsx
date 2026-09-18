@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef } from "react";
 
 import {
@@ -8,7 +9,6 @@ import {
   fadeIn,
   reveal,
   useGSAPAnimation,
-  useScrollTo,
 } from "@leadstrikes/motion-engine";
 
 /**
@@ -22,7 +22,6 @@ import {
  */
 export function AvailabilityButton() {
   const scope = useRef<HTMLDivElement>(null);
-  const scrollTo = useScrollTo();
 
   useGSAPAnimation(() => {
     fadeIn(".avail-icon", {
@@ -41,9 +40,8 @@ export function AvailabilityButton() {
 
   return (
     <div ref={scope}>
-      <button
-        type="button"
-        onClick={() => scrollTo("#inquire")}
+      <Link
+        href="/reservation"
         aria-label="Check availability"
         className="group flex cursor-pointer items-center gap-3"
       >
@@ -71,7 +69,7 @@ export function AvailabilityButton() {
             <path d="M16 3v4M8 3v4M3.5 11h17" />
           </svg>
         </span>
-      </button>
+      </Link>
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Poppins } from "next/font/google";
 
 import { SmoothScrollProvider } from "@leadstrikes/motion-engine";
 
-import { site } from "@/content/site";
+import { reviews, site, villas } from "@/content/site";
 
 import "./globals.css";
 
@@ -15,26 +15,114 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+// Poppins stands in for Sendero's body face (Sofia Pro) — a warm geometric
+// sans that carries the same airy, light-weight register. Weights kept lean to
+// match the delicate feel the design already leans on (font-light everywhere).
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
 });
 
+const ogImage = "/images/pool-dusk.webp";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: {
-    default: `${site.fullName} — ${site.location.town}, ${site.location.country}`,
-    template: `%s — ${site.name}`,
+    default: `${site.fullName} — Luxury Villas in ${site.location.town}, ${site.location.country}`,
+    template: `%s — ${site.name} Tamarindo`,
   },
   description: site.description,
+  keywords: [...site.keywords],
+  applicationName: site.fullName,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: site.fullName,
+    title: `${site.fullName} — Luxury Villas in ${site.location.town}`,
     description: site.description,
+    url: site.url,
+    siteName: site.fullName,
     type: "website",
     locale: "en_US",
-    siteName: site.fullName,
+    images: [{ url: ogImage, alt: `${site.fullName}, Tamarindo, Costa Rica` }],
   },
-  robots: { index: true, follow: true },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.fullName} — Luxury Villas in ${site.location.town}`,
+    description: site.description,
+    images: [ogImage],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+  // Classic geo tags — help local/GEO discovery pin the site to Tamarindo.
+  other: {
+    "geo.region": site.location.regionCode,
+    "geo.placename": `${site.location.town}, ${site.location.province}, ${site.location.country}`,
+    "geo.position": `${site.location.latitude};${site.location.longitude}`,
+    ICBM: `${site.location.latitude}, ${site.location.longitude}`,
+  },
+};
+
+/**
+ * schema.org LodgingBusiness/Resort — the structured record that ties the site
+ * to Tamarindo (address + geo coordinates), to villas and to the hotel/lodging
+ * category, with the real Airbnb rating. Rendered as JSON-LD on every page.
+ */
+const lodgingJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["Resort", "LodgingBusiness"],
+  "@id": `${site.url}/#lodging`,
+  name: site.fullName,
+  alternateName: "Nirvana Villas Tamarindo",
+  description: site.description,
+  url: site.url,
+  image: [`${site.url}${ogImage}`],
+  email: site.contact.email,
+  telephone: site.contact.phone,
+  priceRange: "$$$",
+  currenciesAccepted: "USD",
+  knowsLanguage: ["en", "es"],
+  numberOfRooms: villas.length,
+  slogan: "Your home in paradise.",
+  keywords: site.keywords.join(", "),
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: site.location.town,
+    addressLocality: site.location.town,
+    addressRegion: site.location.province,
+    addressCountry: site.location.countryCode,
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: site.location.latitude,
+    longitude: site.location.longitude,
+  },
+  hasMap: `https://www.google.com/maps/search/?api=1&query=${site.location.latitude},${site.location.longitude}`,
+  areaServed: `${site.location.town}, ${site.location.province}, ${site.location.country}`,
+  amenityFeature: [
+    "Private pool",
+    "Air conditioning",
+    "Free high-speed WiFi",
+    "Fully equipped kitchen",
+    "Beach access",
+    "Daily housekeeping",
+    "Concierge service",
+    "Private parking",
+  ].map((name) => ({
+    "@type": "LocationFeatureSpecification",
+    name,
+    value: true,
+  })),
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: reviews.rating,
+    reviewCount: reviews.count,
+    bestRating: "5",
+  },
+  sameAs: [site.contact.airbnb],
 };
 
 export const viewport: Viewport = {
@@ -47,7 +135,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${inter.variable} antialiased`}
+      className={`${cormorant.variable} ${poppins.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -62,6 +150,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `document.documentElement.classList.add('js')`,
           }}
+        />
+        {/* Local-business structured data (schema.org LodgingBusiness). */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(lodgingJsonLd) }}
         />
       </head>
       <body className="bg-bone text-ink">

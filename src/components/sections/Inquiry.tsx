@@ -12,9 +12,10 @@ import {
 } from "@leadstrikes/motion-engine";
 
 import { Container } from "@/components/ui/Container";
+import { ReviewsDialog } from "@/components/ui/ReviewsDialog";
 import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
 import { image } from "@/content/media";
-import { inquiry, site } from "@/content/site";
+import { inquiry, site, villas } from "@/content/site";
 import { ReservationCalendar } from "./ReservationCalendar";
 
 type Status = "idle" | "sending" | "sent" | "error";
@@ -121,15 +122,14 @@ export function Inquiry() {
               {inquiry.body}
             </Lead>
 
-            <a
-              href={site.contact.airbnb}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inquiry-copy mt-10 block font-sans text-sm font-light text-teak-light transition-colors hover:text-bone"
+            {/* Opens the on-site reviews pop-up rather than leaving for
+                Airbnb — the reviews are shown here, with a link out inside. */}
+            <ReviewsDialog
+              className="inquiry-copy mt-10 block cursor-pointer text-left font-sans text-sm font-light text-teak-light underline decoration-teak-light/40 underline-offset-4 transition-colors hover:text-bone hover:decoration-bone/60"
               data-reveal
             >
               ★ {inquiry.social}
-            </a>
+            </ReviewsDialog>
 
             <a
               href={`mailto:${site.contact.email}`}
@@ -183,6 +183,36 @@ export function Inquiry() {
                       className={FIELD}
                       placeholder="you@example.com"
                     />
+                  </div>
+                </div>
+
+                <div className="inquiry-field" data-reveal>
+                  <label className={LABEL} htmlFor="villa">
+                    Villa
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="villa"
+                      name="villa"
+                      defaultValue=""
+                      className={`${FIELD} cursor-pointer appearance-none pr-8 [&>option]:bg-bone [&>option]:text-ink`}
+                    >
+                      <option value="" disabled>
+                        Which villa would you like?
+                      </option>
+                      {villas.map((v) => (
+                        <option key={v.slug} value={v.name}>
+                          {v.name}
+                        </option>
+                      ))}
+                      <option value="Not sure yet">Not sure yet</option>
+                    </select>
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute bottom-3 right-0 text-bone/50"
+                    >
+                      ▾
+                    </span>
                   </div>
                 </div>
 

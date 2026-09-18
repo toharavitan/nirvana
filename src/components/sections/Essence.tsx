@@ -8,8 +8,6 @@ import {
   STAGGER,
   createScrollAnimation,
   gsap,
-  imageReveal,
-  parallax,
   reveal,
   textReveal,
   useGSAPAnimation,
@@ -41,17 +39,8 @@ export function Essence() {
     reveal(".essence-body", { stagger: STAGGER.base, scroll: true });
     reveal(".essence-stat", { stagger: STAGGER.tight, scroll: true });
 
-    // Both target the same layer: imageReveal owns clip-path and scale,
-    // parallax owns y, so they compose rather than fight. The layer is inset
-    // beyond the frame on both edges to give the drift somewhere to go.
-    imageReveal(".essence-image", { direction: "bottom", scroll: true });
-    parallax(".essence-image", { speed: 0.12 });
-
-    // The inset and the numeral drift at different rates than the plate they
-    // sit against — three planes moving apart is what reads as depth.
-    reveal(".essence-porthole", { direction: "up", scroll: true });
-    parallax(".essence-porthole", { speed: 0.22 });
-    parallax(".essence-numeral", { speed: 0.15 });
+    // The photograph and its porthole inset are intentionally static — no
+    // reveal or parallax — so the image sits still while the copy animates.
 
     // The numbers count up as they arrive. Server HTML carries the final
     // values; the tween only rewinds them once the visitor is here to watch.
@@ -161,7 +150,6 @@ export function Essence() {
               */}
               <div
                 className="essence-porthole absolute -bottom-10 -left-6 hidden size-40 overflow-hidden rounded-full ring-8 ring-bone lg:block xl:size-48 xl:-left-12"
-                data-reveal
               >
                 <Image
                   src={porthole.src}
