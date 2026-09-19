@@ -99,9 +99,22 @@ export function ScrollVideo({
         },
       });
 
-      // Half a frame at 24fps. Below this the seek is imperceptible and only
-      // costs a decode.
-      const MIN_STEP = 1 / 48;
+      // One frame at 24fps. Seeking for anything finer just spends a full
+      // intra-frame decode on a change no one can see — the biggest lever on
+      // how much decode work the scrub asks for, so it stays a whole frame.
+      const MIN_STEP = 1 / 24;
+
+      // `fastSeek` jumps to the nearest keyframe without the exact-frame decode
+      // `currentTime` forces. The clips are all-intra, so every frame *is* a
+      // keyframe — the result is identical but markedly cheaper where the
+      // browser implements it (Safari, Firefox). Chrome falls back to
+      // `currentTime`, which is already keyframe-accurate here.
+      const seekTo =
+        typeof video.fastSeek === "function"
+          ? (t: number) => video.fastSeek(t)
+          : (t: number) => {
+              video.currentTime = t;
+            };
 
       const playhead = { time: 0 };
 
@@ -114,21 +127,19 @@ export function ScrollVideo({
         const target = Math.min(playhead.time, duration - MIN_STEP);
 
         if (Math.abs(video.currentTime - target) > MIN_STEP) {
-          video.currentTime = target;
+          seekTo(target);
         }
       };
 
       const timeline = gsap.timeline({ paused: true });
-      // The playhead reaches the final frame at 90% of the pinned range and
-      // holds it through the last 10%. Because `scrub` lets the video trail the
-      // scroll by up to a second, finishing early guarantees the journey is
-      // fully resolved *before* the section un-pins — otherwise, flicking to the
-      // bottom releases the pin while the last frames are still catching up, and
-      // the incoming (white) section slides in over an unfinished shot. The
-      // scale drift below still runs to 100%, so the hold never reads as frozen.
+      // The playhead runs the full pinned range at a constant rate, so the clip
+      // keeps moving right up to the moment the section releases — no hold at
+      // the end, which read as the footage getting stuck. The white gap that
+      // used to show here was the viewport-height issue (now fixed with `lvh`),
+      // not the playhead, so the video no longer needs to finish early.
       timeline.to(playhead, {
         time: source.duration,
-        duration: 0.9,
+        duration: 1,
         ease: EASING.none,
         onUpdate: seek,
       });
@@ -230,7 +241,12 @@ export function ScrollVideo({
       ) : (
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover will-change-transform [filter:saturate(1.07)_contrast(1.04)]"
+          // No CSS filter on the video: it is transform-scaled every frame, and
+          // filtering a scaled full-screen video layer forces a costly
+          // re-raster on each seek — a prime cause of the scrub feeling laggy.
+          // The vignette, scrim and grain overlays below already carry the
+          // grade; the lost 1.07 saturate / 1.04 contrast is imperceptible.
+          className="absolute inset-0 h-full w-full object-cover will-change-transform"
           poster={source.poster}
           preload="none"
           muted

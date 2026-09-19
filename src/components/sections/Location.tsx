@@ -15,7 +15,7 @@ import { Container } from "@/components/ui/Container";
 import { Eyebrow, Lead } from "@/components/ui/Typography";
 import { location } from "@/content/site";
 
-import forestValley from "@/assets/decor/forest-valley.jpg";
+import rainforestFalls from "@/assets/decor/etienne-delorieux-e5sp18O40yA-unsplash.jpg";
 
 /**
  * Where it actually is.
@@ -44,7 +44,7 @@ export function Location() {
     <section ref={scope} className="relative isolate bg-ink" id="location">
       <div className="absolute inset-0 overflow-hidden">
         <Image
-          src={forestValley}
+          src={rainforestFalls}
           alt="A misty green forested valley"
           fill
           sizes="100vw"

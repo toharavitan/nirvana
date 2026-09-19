@@ -131,7 +131,7 @@ export function Essence() {
 
                   return (
                   <div key={stat.label} className="essence-stat" data-reveal>
-                    <dt className="font-display text-4xl font-light text-teak sm:text-5xl">
+                    <dt className="font-rector text-4xl font-normal text-teak sm:text-5xl">
                       {parts ? (
                         <>
                           <span data-count={parts[1]}>{parts[1]}</span>

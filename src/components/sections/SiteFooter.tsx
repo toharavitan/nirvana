@@ -40,6 +40,7 @@ export function SiteFooter() {
             </p>
             <ul className="mt-4 flex flex-col gap-2 font-sans text-sm font-light text-bone/60">
               {[
+                { label: "FAQ", href: "/faq" },
                 { label: "Terms & Conditions", href: "/terms" },
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Accessibility", href: "/accessibility" },

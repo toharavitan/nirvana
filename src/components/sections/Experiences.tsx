@@ -61,9 +61,12 @@ export function Experiences() {
     reveal(".experiences-intro", { scroll: true });
     reveal(".experiences-category", { stagger: STAGGER.base, scroll: true });
 
-    // The Costa Rica map floats: it drifts upward, faster than the page, as
-    // the visitor scrolls past it.
-    parallax(".experiences-map", { speed: 0.28 });
+    // The Costa Rica map floats hard against the scroll: a strong negative
+    // speed reverses the parallax and drives a big travel, so as the visitor
+    // passes it the map sweeps the whole header height — from the "effortless"
+    // line up past the "Discover Costa Rica" headline — moving opposite to the
+    // scroll direction.
+    parallax(".experiences-map", { speed: -1.5 });
 
     textReveal(".experiences-closing-headline", { split: "lines", scroll: true });
     reveal(".experiences-closing-body", { scroll: true });
@@ -147,7 +150,13 @@ export function Experiences() {
                 src={costaRicaMap}
                 alt="Map of the Republic of Costa Rica, drawn in 1889"
                 sizes="(max-width: 1024px) 100vw, 58vw"
-                className="h-auto w-full shadow-[0_28px_70px_rgba(20,25,26,0.18)]"
+                // A real paper shadow, not a box-shadow. box-shadow follows the
+                // element's rectangle, so it boxed the torn, transparent edges.
+                // Stacked `drop-shadow` filters trace the PNG's actual
+                // silhouette: a tight contact shadow where the paper meets the
+                // page, then a wide ambient one — together they read as a real
+                // map lying on the surface, ragged edges included.
+                className="h-auto w-full [filter:drop-shadow(0_1px_1px_rgba(20,25,26,0.28))_drop-shadow(0_4px_6px_rgba(20,25,26,0.20))_drop-shadow(0_24px_46px_rgba(20,25,26,0.22))]"
               />
             </figure>
           </div>

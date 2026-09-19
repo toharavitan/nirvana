@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/villas`, priority: 0.9 },
     { url: `${base}/experiences`, priority: 0.8 },
     { url: `${base}/reservation`, priority: 0.9 },
+    { url: `${base}/faq`, priority: 0.6 },
     { url: `${base}/terms`, priority: 0.4 },
     { url: `${base}/privacy`, priority: 0.4 },
     { url: `${base}/accessibility`, priority: 0.4 },
