@@ -123,7 +123,7 @@ function Chapter({ index, title, body, imageKey, detailKey }: ChapterProps) {
             {numeral}
           </span>
 
-          <h3 className="chapter-title mt-4 font-display text-[length:var(--text-title)] font-light leading-tight text-ink">
+          <h3 className="chapter-title mt-4 font-rector text-[length:var(--text-title)] font-normal leading-tight text-ink">
             {title}
           </h3>
 

@@ -75,8 +75,8 @@ export function Headline({
   return (
     <Tag
       className={
-        "font-display text-[length:var(--text-headline)] font-light " +
-        `leading-[1.05] tracking-[-0.01em] text-balance ${className}`
+        "font-rector text-[length:var(--text-headline)] font-normal " +
+        `leading-[1.08] tracking-[-0.01em] text-balance ${className}`
       }
     >
       {content}

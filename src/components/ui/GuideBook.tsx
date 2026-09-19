@@ -3,33 +3,35 @@
 import HTMLFlipBook from "react-pageflip";
 import { forwardRef, useEffect, useRef, useState } from "react";
 
-import { guide } from "@/content/site";
-
-const src = (n: number) =>
-  `${guide.pathBase}${String(n).padStart(2, "0")}.webp`;
-
-const PAGES = Array.from({ length: guide.pageCount }, (_, i) => i + 1);
+/** A flip-book: rasterised pages in /public + a downloadable source. */
+export interface Book {
+  title: string;
+  subtitle: string;
+  pageCount: number;
+  /** e.g. "/guide/page-" → "/guide/page-01.webp". */
+  pathBase: string;
+  downloadUrl: string;
+}
 
 // react-pageflip clones each child and attaches a ref, so a page must forward
 // its ref to a real element.
-const Leaf = forwardRef<HTMLDivElement, { n: number }>(function Leaf(
-  { n },
-  ref,
-) {
-  return (
-    <div ref={ref} className="guide-leaf bg-bone">
-      {/* Plain <img>, not next/image — the flip library measures and moves the
-          real DOM node, so hand it the least surprising element. */}
-      <img
-        src={src(n)}
-        alt={`${guide.title} — page ${n}`}
-        className="block h-full w-full select-none object-cover"
-        draggable={false}
-        loading={n <= 4 ? "eager" : "lazy"}
-      />
-    </div>
-  );
-});
+const Leaf = forwardRef<HTMLDivElement, { src: string; alt: string; eager: boolean }>(
+  function Leaf({ src, alt, eager }, ref) {
+    return (
+      <div ref={ref} className="guide-leaf bg-bone">
+        {/* Plain <img>, not next/image — the flip library measures and moves
+            the real DOM node, so hand it the least surprising element. */}
+        <img
+          src={src}
+          alt={alt}
+          className="block h-full w-full select-none object-cover"
+          draggable={false}
+          loading={eager ? "eager" : "lazy"}
+        />
+      </div>
+    );
+  },
+);
 
 interface Box {
   w: number;
@@ -65,7 +67,20 @@ function calcBox(): Box {
  * reflows to fit any screen without ever being remounted. Client-only, so the
  * flip engine never runs on the server.
  */
-export function GuideBook({ onClose }: { onClose: () => void }) {
+export function GuideBook({
+  book,
+  onClose,
+  initialPage = 0,
+}: {
+  book: Book;
+  onClose: () => void;
+  /** 0-based page index to open on. */
+  initialPage?: number;
+}) {
+  const src = (n: number) =>
+    `${book.pathBase}${String(n).padStart(2, "0")}.webp`;
+  const PAGES = Array.from({ length: book.pageCount }, (_, i) => i + 1);
+
   const bookRef = useRef<{
     pageFlip: () => {
       flipNext: () => void;
@@ -75,13 +90,29 @@ export function GuideBook({ onClose }: { onClose: () => void }) {
   } | null>(null);
 
   const [box, setBox] = useState<Box | null>(null);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(initialPage);
 
   const flip = (d: number) => {
     const api = bookRef.current?.pageFlip();
     if (!api) return;
     if (d > 0) api.flipNext();
     else api.flipPrev();
+  };
+
+  // Page-turn sound effect, lazily created after the first open (audio can only
+  // start from a user gesture, which opening the book is).
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playTurn = () => {
+    try {
+      if (!audioRef.current) {
+        audioRef.current = new Audio("/audio/page-turn.mp3");
+        audioRef.current.volume = 0.5;
+      }
+      audioRef.current.currentTime = 0;
+      void audioRef.current.play().catch(() => {});
+    } catch {
+      /* audio unavailable — silent */
+    }
   };
 
   // Measure now, and on resize / orientation change (debounced). The parent
@@ -131,7 +162,7 @@ export function GuideBook({ onClose }: { onClose: () => void }) {
     };
   }, []);
 
-  const N = guide.pageCount;
+  const N = book.pageCount;
   const left1 = page + 1;
   // On phones each leaf is a single page; wider screens show two-page spreads,
   // so only there does the counter read as a range.
@@ -147,7 +178,7 @@ export function GuideBook({ onClose }: { onClose: () => void }) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${guide.title} — flip-through guide`}
+      aria-label={`${book.title} — flip-through guide`}
       data-lenis-prevent
       className="fixed inset-0 z-[200] flex flex-col overscroll-contain bg-ink/90 backdrop-blur-sm"
     >
@@ -155,10 +186,10 @@ export function GuideBook({ onClose }: { onClose: () => void }) {
       <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-3 text-bone sm:px-10 sm:py-5">
         <div className="min-w-0">
           <p className="font-sans text-[0.55rem] uppercase tracking-[0.26em] text-bone/50 sm:text-[0.6rem] sm:tracking-[0.28em]">
-            {guide.subtitle}
+            {book.subtitle}
           </p>
           <p className="mt-0.5 truncate font-display text-lg font-light text-bone sm:mt-1 sm:text-2xl">
-            {guide.title}
+            {book.title}
           </p>
         </div>
         <button
@@ -197,7 +228,7 @@ export function GuideBook({ onClose }: { onClose: () => void }) {
               maxWidth={700}
               minHeight={266}
               maxHeight={933}
-              startPage={0}
+              startPage={initialPage}
               drawShadow
               flippingTime={700}
               usePortrait
@@ -214,9 +245,19 @@ export function GuideBook({ onClose }: { onClose: () => void }) {
               className="guide-book mx-auto"
               style={{}}
               onFlip={(e: { data: number }) => setPage(e.data)}
+              onChangeState={(e: { data: string }) => {
+                // Fires at the start of every turn (drag or button) — cue the
+                // page-turn sound then.
+                if (e.data === "flipping") playTurn();
+              }}
             >
               {PAGES.map((n) => (
-                <Leaf key={n} n={n} />
+                <Leaf
+                  key={n}
+                  src={src(n)}
+                  alt={`${book.title} — page ${n}`}
+                  eager={n <= 4}
+                />
               ))}
             </HTMLFlipBook>
           </div>
@@ -254,7 +295,7 @@ export function GuideBook({ onClose }: { onClose: () => void }) {
         </button>
 
         <a
-          href={guide.downloadUrl}
+          href={book.downloadUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="ml-2 hidden font-sans text-[0.65rem] uppercase tracking-[0.22em] text-teak-light transition-colors hover:text-bone sm:inline"

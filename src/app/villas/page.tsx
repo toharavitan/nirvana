@@ -5,10 +5,13 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/sections/SiteFooter";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
+import { Decor } from "@/components/ui/Decor";
 import { FloatingActions } from "@/components/ui/FloatingActions";
 import { SiteNav } from "@/components/ui/SiteNav";
 import { image } from "@/content/media";
 import { villas } from "@/content/site";
+
+import decorBlossom from "@/assets/art-background-blossom-svgrepo-com.svg";
 
 export const metadata: Metadata = {
   title: "Villas in Tamarindo",
@@ -28,8 +31,14 @@ export default function VillasIndexPage() {
       <SiteNav />
 
       <main>
-        <section className="bg-bone pb-16 pt-36 sm:pb-20 sm:pt-52">
-          <Container width="wide">
+        <section className="relative overflow-hidden bg-bone pb-16 pt-36 sm:pb-20 sm:pt-52">
+          <Decor
+            src={decorBlossom}
+            className="-right-24 -top-16 size-[540px] rotate-3 sm:size-[640px]"
+            color="var(--color-teak)"
+            opacity={0.06}
+          />
+          <Container width="wide" className="relative z-10">
             <div className="max-w-3xl">
               <Eyebrow index="—">The villas</Eyebrow>
               <Headline accent={1} className="mt-6 text-ink">
@@ -67,6 +76,27 @@ export default function VillasIndexPage() {
                           aria-hidden
                           className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/5 to-transparent"
                         />
+                        <span
+                          className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-ink/45 px-3 py-1.5 font-sans text-[0.68rem] uppercase tracking-[0.18em] text-bone backdrop-blur-sm"
+                          title={`Sleeps ${villa.guests} guests`}
+                        >
+                          <svg
+                            aria-hidden
+                            viewBox="0 0 24 24"
+                            className="size-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg>
+                          {villa.guests}
+                        </span>
                         <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6 text-bone">
                           <span className="font-display text-3xl font-light leading-none">
                             {villa.name}

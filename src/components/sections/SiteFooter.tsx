@@ -1,7 +1,8 @@
 import Image from "next/image";
 
 import { Container } from "@/components/ui/Container";
-import { hero, nav, site } from "@/content/site";
+import { GuideFlipbook } from "@/components/ui/GuideFlipbook";
+import { manual, nav, site } from "@/content/site";
 
 import nirvanaLogo from "@/assets/nirvana-logo.png";
 
@@ -35,15 +36,33 @@ export function SiteFooter() {
 
           <div>
             <p className="font-sans text-[0.65rem] uppercase tracking-[0.22em] text-bone/40">
-              Find us
+              Info
             </p>
-            <p className="mt-4 font-sans text-sm font-light leading-relaxed text-bone/60">
-              {site.location.town}, {site.location.province}
-              <br />
-              {site.location.country}
-              <br />
-              <span className="text-bone/40">{hero.coordinates}</span>
-            </p>
+            <ul className="mt-4 flex flex-col gap-2 font-sans text-sm font-light text-bone/60">
+              {[
+                { label: "Terms & Conditions", href: "/terms" },
+                { label: "Privacy Policy", href: "/privacy" },
+                { label: "Accessibility", href: "/accessibility" },
+              ].map((page) => (
+                <li key={page.href}>
+                  <a
+                    href={page.href}
+                    className="w-fit transition-colors hover:text-bone"
+                  >
+                    {page.label}
+                  </a>
+                </li>
+              ))}
+              <li>
+                {/* Opens the House Manual as an on-site flip-book. */}
+                <GuideFlipbook
+                  book={manual}
+                  className="w-fit cursor-pointer text-left transition-colors hover:text-bone"
+                >
+                  House Manual
+                </GuideFlipbook>
+              </li>
+            </ul>
           </div>
 
           <div>
@@ -103,14 +122,9 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-bone/10 pt-8 font-sans text-xs font-light text-bone/30 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} {site.fullName}. All rights reserved.
-          </p>
-          <a href="/terms" className="w-fit transition-colors hover:text-bone/60">
-            Terms &amp; Conditions
-          </a>
-        </div>
+        <p className="mt-16 border-t border-bone/10 pt-8 font-sans text-xs font-light text-bone/30">
+          © {new Date().getFullYear()} {site.fullName}. All rights reserved.
+        </p>
       </Container>
     </footer>
   );

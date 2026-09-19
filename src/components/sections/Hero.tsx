@@ -117,7 +117,7 @@ export function Hero() {
                 {threshold.eyebrow}
               </p>
 
-              <h2 className="mt-5 font-display text-[length:var(--text-headline)] font-light leading-[1.05] text-bone text-balance">
+              <h2 className="mt-5 font-rector text-[length:var(--text-headline)] font-normal leading-[1.08] text-bone text-balance">
                 {threshold.headline}
               </h2>
 

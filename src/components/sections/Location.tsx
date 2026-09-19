@@ -12,9 +12,10 @@ import {
 } from "@leadstrikes/motion-engine";
 
 import { Container } from "@/components/ui/Container";
-import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
-import { image } from "@/content/media";
+import { Eyebrow, Lead } from "@/components/ui/Typography";
 import { location } from "@/content/site";
+
+import forestValley from "@/assets/decor/forest-valley.jpg";
 
 /**
  * Where it actually is.
@@ -26,7 +27,6 @@ import { location } from "@/content/site";
  */
 export function Location() {
   const scope = useRef<HTMLDivElement>(null);
-  const aerial = image("aerial-tamarindo");
 
   useGSAPAnimation(() => {
     // Continuous across the section rather than a one-shot entrance: the drift
@@ -44,8 +44,8 @@ export function Location() {
     <section ref={scope} className="relative isolate bg-ink" id="location">
       <div className="absolute inset-0 overflow-hidden">
         <Image
-          src={aerial.src}
-          alt={aerial.alt}
+          src={forestValley}
+          alt="A misty green forested valley"
           fill
           sizes="100vw"
           className="location-image object-cover"
@@ -53,17 +53,20 @@ export function Location() {
         <div aria-hidden className="absolute inset-0 bg-ink/65" />
       </div>
 
-      <Container width="wide" className="relative py-32 sm:py-48">
-        <div className="max-w-2xl">
-          <Eyebrow index="05" className="text-bone/60">
+      <Container width="wide" className="relative py-20 sm:py-28">
+        <div className="mx-auto max-w-[650px] text-center">
+          <Eyebrow index="05" className="justify-center text-bone/60">
             {location.eyebrow}
           </Eyebrow>
 
-          <Headline accent={4} className="location-headline mt-6 text-bone">
+          {/* Image-section title in Rector, to the Sendero spec (.rector-title
+              in globals.css). Falls back to a generic serif until the licensed
+              Rector font files are added to /public/fonts. */}
+          <h2 className="location-headline rector-title mt-6">
             {location.headline}
-          </Headline>
+          </h2>
 
-          <Lead className="location-copy mt-8 text-bone/75" data-reveal>
+          <Lead className="location-copy mx-auto mt-8 max-w-2xl text-bone/75" data-reveal>
             {location.body}
           </Lead>
         </div>

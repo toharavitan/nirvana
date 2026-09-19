@@ -21,7 +21,7 @@ const cormorant = Cormorant_Garamond({
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500"],
   display: "swap",
 });
 
@@ -86,11 +86,15 @@ const lodgingJsonLd = {
   currenciesAccepted: "USD",
   knowsLanguage: ["en", "es"],
   numberOfRooms: villas.length,
+  checkinTime: "15:00",
+  checkoutTime: "10:00",
+  petsAllowed: false,
+  smokingAllowed: false,
   slogan: "Your home in paradise.",
   keywords: site.keywords.join(", "),
   address: {
     "@type": "PostalAddress",
-    streetAddress: site.location.town,
+    streetAddress: site.location.street,
     addressLocality: site.location.town,
     addressRegion: site.location.province,
     addressCountry: site.location.countryCode,
@@ -100,7 +104,7 @@ const lodgingJsonLd = {
     latitude: site.location.latitude,
     longitude: site.location.longitude,
   },
-  hasMap: `https://www.google.com/maps/search/?api=1&query=${site.location.latitude},${site.location.longitude}`,
+  hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.location.mapQuery)}`,
   areaServed: `${site.location.town}, ${site.location.province}, ${site.location.country}`,
   amenityFeature: [
     "Private pool",
@@ -122,7 +126,40 @@ const lodgingJsonLd = {
     reviewCount: reviews.count,
     bestRating: "5",
   },
+  review: reviews.items.slice(0, 3).map((r) => ({
+    "@type": "Review",
+    author: { "@type": "Person", name: r.name },
+    datePublished: r.date,
+    reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
+    reviewBody: r.text,
+  })),
+  containsPlace: villas.map((v) => ({
+    "@type": "Accommodation",
+    name: v.name,
+    url: `${site.url}/villas/${v.slug}`,
+    accommodationCategory: "Villa",
+    numberOfBedrooms: 3,
+    occupancy: { "@type": "QuantitativeValue", maxValue: 6, unitText: "guests" },
+  })),
+  potentialAction: {
+    "@type": "ReserveAction",
+    target: `${site.url}/reservation`,
+    name: "Book your stay",
+  },
   sameAs: [site.contact.airbnb],
+};
+
+// The site itself, for sitelinks/search understanding.
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${site.url}/#website`,
+  url: site.url,
+  name: site.fullName,
+  alternateName: site.name,
+  description: site.description,
+  inLanguage: "en",
+  publisher: { "@id": `${site.url}/#lodging` },
 };
 
 export const viewport: Viewport = {
@@ -151,10 +188,12 @@ export default function RootLayout({
             __html: `document.documentElement.classList.add('js')`,
           }}
         />
-        {/* Local-business structured data (schema.org LodgingBusiness). */}
+        {/* Structured data: the website and the local lodging business. */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(lodgingJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([websiteJsonLd, lodgingJsonLd]),
+          }}
         />
       </head>
       <body className="bg-bone text-ink">

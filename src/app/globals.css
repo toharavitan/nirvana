@@ -2,6 +2,46 @@
 @plugin "tailwindcss-animate";
 
 /*
+  Rector — the display face used on the Sendero site (rector-regular). It is a
+  licensed commercial font, so it is NOT bundled here: drop the real files into
+  /public/fonts/ (rector-regular.woff2 + rector-regular.woff) and this rule
+  picks them up. Until then, image-section titles fall back to a generic serif
+  (deliberately NOT a lookalike substitute).
+*/
+@font-face {
+  font-family: "rector-regular";
+  src:
+    url("/fonts/Rector.woff2") format("woff2"),
+    url("/fonts/Rector.woff") format("woff"),
+    url("/fonts/Rector.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+  Image-section title, to the exact spec of the original Sendero heading:
+  Rector, weight 400, 52px, white, centred, capped at 650px — and 6vw on
+  phones (below 768px).
+*/
+.rector-title {
+  font-family: "rector-regular", serif;
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 1.1;
+  color: #ffffff;
+  text-align: center;
+  max-width: 650px;
+  margin-inline: auto;
+}
+
+@media (max-width: 767px) {
+  .rector-title {
+    font-size: 6vw;
+  }
+}
+
+/*
   Palette drawn from the property itself rather than invented: the limestone
   paving and stucco walls, the near-black slatted fencing, the teak ceilings,
   and the pool as the single saturated accent. Nothing here is brighter than
@@ -9,7 +49,8 @@
   compete with them.
 */
 @theme inline {
-  --color-bone: #f6f3ee;
+  /* TEST: pure white background instead of the cream bone (#f6f3ee). */
+  --color-bone: #ffffff;
   --color-sand: #e7dfd4;
   --color-limestone: #d5cabb;
   --color-stone: #a2968a;
@@ -34,6 +75,8 @@
 
   --font-display: var(--font-cormorant);
   --font-sans: var(--font-poppins);
+  /* Section headers use Rector (loaded via @font-face above). */
+  --font-rector: "rector-regular", ui-serif, serif;
 
   /* Editorial scale. Fluid so the type never needs breakpoint babysitting. */
   --text-display: clamp(3rem, 11vw, 10rem);

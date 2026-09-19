@@ -119,9 +119,16 @@ export function ScrollVideo({
       };
 
       const timeline = gsap.timeline({ paused: true });
+      // The playhead reaches the final frame at 90% of the pinned range and
+      // holds it through the last 10%. Because `scrub` lets the video trail the
+      // scroll by up to a second, finishing early guarantees the journey is
+      // fully resolved *before* the section un-pins — otherwise, flicking to the
+      // bottom releases the pin while the last frames are still catching up, and
+      // the incoming (white) section slides in over an unfinished shot. The
+      // scale drift below still runs to 100%, so the hold never reads as frozen.
       timeline.to(playhead, {
         time: source.duration,
-        duration: 1,
+        duration: 0.9,
         ease: EASING.none,
         onUpdate: seek,
       });
@@ -199,7 +206,14 @@ export function ScrollVideo({
   return (
     <section
       ref={scope}
-      className={`relative h-svh w-full overflow-hidden bg-ink ${className}`}
+      // `lvh` (the large viewport height) rather than `svh`: on mobile the URL
+      // bar hides as you scroll, growing the viewport. With `svh` the pinned
+      // frame stayed at the bar-visible height, so a strip of the next (white)
+      // section showed at the bottom near the end of the scrub. `lvh` is the
+      // static bar-retracted height — the state the frame is pinned in while
+      // scrolling — so it fills the screen with no gap, and because it never
+      // changes with the bar, ScrollTrigger's measurement stays stable.
+      className={`relative h-lvh w-full overflow-hidden bg-ink ${className}`}
     >
       {reducedMotion ? (
         // Motion is the entire point of this section, so there is nothing to

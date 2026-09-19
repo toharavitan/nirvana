@@ -3,8 +3,13 @@ import type { Metadata } from "next";
 import { SiteFooter } from "@/components/sections/SiteFooter";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
+import { Decor } from "@/components/ui/Decor";
+import { Botanical } from "@/components/ui/Botanical";
 import { FloatingActions } from "@/components/ui/FloatingActions";
 import { SiteNav } from "@/components/ui/SiteNav";
+
+import decorBotanical from "@/assets/botanical-continuous-line-decor-svgrepo-com.svg";
+import botanicalSketch from "@/assets/decor/botanical-sketch.jpg";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions",
@@ -104,8 +109,14 @@ export default function TermsPage() {
       <SiteNav />
 
       <main>
-        <section className="bg-bone pb-16 pt-36 text-center sm:pb-20 sm:pt-52">
-          <Container width="default">
+        <section className="relative overflow-hidden bg-bone pb-16 pt-36 text-center sm:pb-20 sm:pt-52">
+          <Decor
+            src={decorBotanical}
+            className="-right-24 -top-16 size-[520px] rotate-6 sm:size-[620px]"
+            color="var(--color-teak)"
+            opacity={0.06}
+          />
+          <Container width="default" className="relative z-10">
             <Eyebrow index="—" className="justify-center">
               Guest policies
             </Eyebrow>
@@ -119,8 +130,13 @@ export default function TermsPage() {
           </Container>
         </section>
 
-        <section className="bg-bone pb-28 sm:pb-40">
-          <Container width="default">
+        <section className="relative overflow-hidden bg-bone pb-28 sm:pb-40">
+          <Botanical
+            src={botanicalSketch}
+            className="bottom-16 right-[-4%] hidden w-56 lg:block xl:w-72"
+            opacity={0.6}
+          />
+          <Container width="default" className="relative z-10">
             <ol className="flex flex-col gap-12 sm:gap-14">
               {SECTIONS.map((section, index) => (
                 <li

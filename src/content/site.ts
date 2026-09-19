@@ -48,19 +48,21 @@ export const site = {
     countryCode: "CR",
     // ISO 3166-2 region code for Guanacaste, used in geo meta tags.
     regionCode: "CR-G",
-    // TODO(client): exact street address for maps and schema.org
-    address: "Tamarindo, Guanacaste, Costa Rica",
-    // Tamarindo town centre — TODO(client): replace with the villas' exact
-    // coordinates once the street address is confirmed.
-    latitude: 10.2993,
-    longitude: -85.8407,
+    street: "75X6+555, C. Corona",
+    address: "75X6+555, C. Corona, Tamarindo, Guanacaste, Costa Rica",
+    // The exact query Google Maps pins — the Plus Code + street, so the map
+    // and Street View both centre on the property.
+    mapQuery: "75X6+555, C. Corona, Tamarindo, Provincia de Guanacaste, Costa Rica",
+    // Decoded from the Plus Code 762P75X6+555 (75X6+555 Tamarindo).
+    latitude: 10.297887,
+    longitude: -85.839516,
   },
 
   contact: {
-    // TODO(client): real address, number and WhatsApp
+    // TODO(client): confirm the booking email.
     email: "stay@nirvanatamarindo.com",
-    phone: "+506 0000 0000",
-    whatsapp: "+50600000000",
+    phone: "+506 8506 2238",
+    whatsapp: "+50685062238",
     airbnb: "https://www.airbnb.com/rooms/53234685",
     whatsappMessage:
       "Hello! We'd like to book a vacation at Nirvana Tamarindo — could you " +
@@ -76,7 +78,7 @@ export const site = {
 export const hero = {
   eyebrow: "Tamarindo · Guanacaste · Costa Rica",
   title: "Nirvana",
-  subtitle: "Four private villas, a few streets back from the Pacific.",
+  subtitle: "Six private villas, a few streets back from the Pacific.",
   scrollHint: "Scroll to arrive",
   cta: "[ Explore the villas ]",
   // TODO(client): exact coordinates once the street address is confirmed
@@ -87,7 +89,7 @@ export const threshold = {
   eyebrow: "The arrival",
   headline: "Past the gate, the road goes quiet.",
   body:
-    "The property turns inward. One palm walkway runs its length, four villas " +
+    "The property turns inward. One palm walkway runs its length, six villas " +
     "open off it, and nothing passes through. What reaches you from here is " +
     "water, wind in the palms, and not much else.",
 } as const;
@@ -107,7 +109,7 @@ export const essence = {
   stats: [
     // Verified against the Airbnb listing (airbnb.com/rooms/53234685).
     // TODO(client): confirm total villa count for the whole compound.
-    { value: "4", label: "private villas" },
+    { value: "6", label: "private villas" },
     { value: "6", label: "guests per villa" },
     { value: "7 min", label: "walk to the beach" },
     { value: "4.99", label: "rating · 206 stays" },
@@ -270,30 +272,63 @@ export const experiences = {
     "experiences throughout Tamarindo and beyond — making every part of your " +
     "stay effortless.",
 
+  // `page` is the 1-based page in the concierge guide each experience opens to.
+  // TODO(client): adjust if the guide's page order changes.
   menu: [
     {
       category: "Ocean",
-      items: ["Surfing", "Catamaran", "Private Yacht", "Snorkeling", "Scuba Diving"],
+      items: [
+        { name: "Surfing", page: 4 },
+        { name: "Catamaran", page: 10 },
+        { name: "Private Yacht", page: 10 },
+        { name: "Snorkeling", page: 11 },
+        { name: "Scuba Diving", page: 12 },
+      ],
     },
     {
       category: "Adventure",
-      items: ["ATV", "UTV", "Zip Line", "River Tubing", "Horseback Riding"],
+      items: [
+        { name: "ATV", page: 8 },
+        { name: "UTV", page: 8 },
+        { name: "Zip Line", page: 9 },
+        { name: "River Tubing", page: 14 },
+        { name: "Horseback Riding", page: 7 },
+      ],
     },
     {
       category: "Nature",
-      items: ["Rio Celeste", "Waterfalls", "Sloths", "Wildlife", "Tamarindo Estuary"],
+      items: [
+        { name: "Rio Celeste", page: 17 },
+        { name: "Waterfalls", page: 17 },
+        { name: "Sloths", page: 18 },
+        { name: "Wildlife", page: 19 },
+        { name: "Tamarindo Estuary", page: 6 },
+      ],
     },
     {
       category: "Volcano & Rainforest",
-      items: ["Rincón de la Vieja", "Hot Springs", "Mud Baths", "Hanging Bridges"],
+      items: [
+        { name: "Rincón de la Vieja", page: 13 },
+        { name: "Hot Springs", page: 13 },
+        { name: "Mud Baths", page: 13 },
+        { name: "Hanging Bridges", page: 15 },
+      ],
     },
     {
       category: "Wellness",
-      items: ["In-Villa Massage", "Relaxation", "Wellness"],
+      items: [
+        { name: "In-Villa Massage", page: 5 },
+        { name: "Relaxation", page: 5 },
+        { name: "Wellness", page: 5 },
+      ],
     },
     {
       category: "Explore",
-      items: ["Nearby Beaches", "Private Transportation", "Golf Cart Rental"],
+      items: [
+        { name: "Nearby Beaches", page: 3 },
+        { name: "Private Transportation", page: 2 },
+        { name: "Golf Cart Rental", page: 2 },
+      ],
     },
   ],
 
@@ -482,6 +517,17 @@ export const guide = {
     "https://drive.google.com/file/d/1FRC7_vWeAnR_i_WGnuQRmMNzwUToxPnx/view",
 } as const;
 
+// The House Manual, shown on-site as the same page-flip book. Pages live in
+// /public/manual as page-01.webp … page-NN.webp; the download link points at
+// the original PDF in /public/pdfs.
+export const manual = {
+  title: "House Manual",
+  subtitle: "Nirvana Villas Tamarindo",
+  pageCount: 28,
+  pathBase: "/manual/page-",
+  downloadUrl: "/pdfs/nirvana-house-manual.pdf",
+} as const;
+
 // ---------------------------------------------------------------------------
 // The individual villas
 //
@@ -491,12 +537,12 @@ export const guide = {
 // Right now every villa page shares the same room, amenity and gallery content.
 // ---------------------------------------------------------------------------
 export const villas = [
-  { slug: "villa-01", label: "Villa 01", name: "Villa 01", number: "01", image: "pool-villa-day" },
-  { slug: "villa-02", label: "Villa 02", name: "Villa 02", number: "02", image: "terrace-pool" },
-  { slug: "villa-03", label: "Villa 03", name: "Villa 03", number: "03", image: "bedroom-poolside" },
-  { slug: "villa-04", label: "Villa 04", name: "Villa 04", number: "04", image: "indoor-outdoor" },
-  { slug: "villa-05", label: "Villa 05", name: "Villa 05", number: "05", image: "pool-palapa" },
-  { slug: "almendro", label: "Almendro", name: "Almendro", number: "06", image: "pool-dusk" },
+  { slug: "villa-01", label: "Villa 01", name: "Villa 01", number: "01", image: "pool-villa-day", guests: 6 },
+  { slug: "villa-02", label: "Villa 02", name: "Villa 02", number: "02", image: "terrace-pool", guests: 6 },
+  { slug: "villa-03", label: "Villa 03", name: "Villa 03", number: "03", image: "bedroom-poolside", guests: 6 },
+  { slug: "villa-04", label: "Villa 04", name: "Villa 04", number: "04", image: "indoor-outdoor", guests: 6 },
+  { slug: "villa-05", label: "Villa 05", name: "Villa 05", number: "05", image: "pool-palapa", guests: 6 },
+  { slug: "almendro", label: "Almendro", name: "Almendro", number: "06", image: "pool-dusk", guests: 8 },
 ] as const;
 
 export type NavItem = {

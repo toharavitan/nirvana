@@ -2,21 +2,32 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import dynamic from "next/dynamic";
+import { useRef, useState } from "react";
 
 import {
   STAGGER,
+  parallax,
   reveal,
   textReveal,
   useGSAPAnimation,
 } from "@leadstrikes/motion-engine";
 
 import { Container } from "@/components/ui/Container";
-import { GuideFlipbook } from "@/components/ui/GuideFlipbook";
+import { Botanical } from "@/components/ui/Botanical";
 import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
-import { experiences, site } from "@/content/site";
+import { experiences, guide, site } from "@/content/site";
+
+// The flip engine touches the DOM at load, so the book is client-only and
+// mounted only once opened.
+const GuideBook = dynamic(
+  () => import("@/components/ui/GuideBook").then((m) => m.GuideBook),
+  { ssr: false },
+);
 
 import costaRicaMap from "@/assets/decor/costa-rica-map.png";
+import botanicalMonstera from "@/assets/decor/botanical-monstera.jpg";
+import botanicalVine from "@/assets/decor/botanical-vine.jpg";
 
 /**
  * The experiences page: the Nirvana Concierge introduces itself, then the
@@ -29,6 +40,11 @@ import costaRicaMap from "@/assets/decor/costa-rica-map.png";
  */
 export function Experiences() {
   const scope = useRef<HTMLDivElement>(null);
+
+  // The guide book: null when closed, otherwise the 0-based page to open on.
+  const [bookPage, setBookPage] = useState<number | null>(null);
+  // `page` in the data is 1-based; the book is 0-based.
+  const openGuide = (page: number) => setBookPage(page - 1);
 
   // The concierge is the working planning channel, so "contact" opens WhatsApp
   // pre-filled — the same number the floating action uses.
@@ -45,6 +61,10 @@ export function Experiences() {
     reveal(".experiences-intro", { scroll: true });
     reveal(".experiences-category", { stagger: STAGGER.base, scroll: true });
 
+    // The Costa Rica map floats: it drifts upward, faster than the page, as
+    // the visitor scrolls past it.
+    parallax(".experiences-map", { speed: 0.28 });
+
     textReveal(".experiences-closing-headline", { split: "lines", scroll: true });
     reveal(".experiences-closing-body", { scroll: true });
 
@@ -54,8 +74,18 @@ export function Experiences() {
   return (
     <div ref={scope} className="bg-bone text-ink">
       {/* Concierge introduction ------------------------------------------ */}
-      <section className="pt-40 sm:pt-52">
-        <Container width="wide">
+      <section className="relative overflow-hidden pt-40 sm:pt-52">
+        <Botanical
+          src={botanicalVine}
+          className="left-[-3%] top-28 hidden w-64 lg:block xl:w-80"
+          opacity={0.7}
+        />
+        <Botanical
+          src={botanicalMonstera}
+          className="bottom-4 right-[-3%] hidden w-56 lg:block xl:w-72"
+          opacity={0.65}
+        />
+        <Container width="wide" className="relative z-10">
           <div className="relative mx-auto max-w-3xl text-center">
             <span
               aria-hidden
@@ -96,10 +126,10 @@ export function Experiences() {
       </section>
 
       {/* Experiences menu ------------------------------------------------ */}
-      <section className="py-24 sm:py-32">
-        <Container width="wide">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
-            <header className="max-w-2xl">
+      <section className="relative overflow-hidden py-24 sm:py-32">
+        <Container width="wide" className="relative z-10">
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+            <header className="max-w-2xl lg:col-span-5">
               <Eyebrow index="06">{experiences.eyebrow}</Eyebrow>
               <Headline accent={2} className="experiences-headline mt-6 text-ink">
                 {experiences.headline}
@@ -110,13 +140,14 @@ export function Experiences() {
             </header>
 
             {/* The 1889 map of Costa Rica, set beside the invitation to
-                explore it. */}
-            <figure className="lg:justify-self-end">
+                explore it — larger, and drifting up on scroll (see parallax
+                above). */}
+            <figure className="experiences-map will-change-transform lg:col-span-7 lg:-my-8 lg:justify-self-end">
               <Image
                 src={costaRicaMap}
                 alt="Map of the Republic of Costa Rica, drawn in 1889"
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                className="h-auto w-full shadow-[0_24px_60px_rgba(20,25,26,0.15)]"
+                sizes="(max-width: 1024px) 100vw, 58vw"
+                className="h-auto w-full shadow-[0_28px_70px_rgba(20,25,26,0.18)]"
               />
             </figure>
           </div>
@@ -134,11 +165,16 @@ export function Experiences() {
 
                 <ul className="flex flex-wrap gap-3 lg:col-span-8">
                   {group.items.map((item) => (
-                    <li
-                      key={item}
-                      className="rounded-full border border-ink/15 px-5 py-2.5 font-sans text-[0.7rem] uppercase tracking-[0.18em] text-clay transition-colors duration-300 hover:border-teak hover:text-teak"
-                    >
-                      {item}
+                    <li key={item.name}>
+                      {/* Opens the concierge guide straight to this experience. */}
+                      <button
+                        type="button"
+                        onClick={() => openGuide(item.page)}
+                        aria-label={`${item.name} — open in the guide`}
+                        className="cursor-pointer rounded-full border border-ink/15 px-5 py-2.5 font-sans text-[0.7rem] uppercase tracking-[0.18em] text-clay transition-colors duration-300 hover:border-teak hover:bg-teak hover:text-bone"
+                      >
+                        {item.name}
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -166,8 +202,12 @@ export function Experiences() {
             </p>
 
             <div className="mt-10 flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-              {/* Opens the guide as an on-site page-flip magazine. */}
-              <GuideFlipbook className="inline-flex cursor-pointer items-center gap-3 rounded-full bg-bone px-8 py-4 font-sans text-[0.7rem] uppercase tracking-[0.24em] text-ink transition-colors duration-300 hover:bg-teak hover:text-bone">
+              {/* Opens the guide as an on-site page-flip magazine, at the cover. */}
+              <button
+                type="button"
+                onClick={() => openGuide(1)}
+                className="inline-flex cursor-pointer items-center gap-3 rounded-full bg-bone px-8 py-4 font-sans text-[0.7rem] uppercase tracking-[0.24em] text-ink transition-colors duration-300 hover:bg-teak hover:text-bone"
+              >
                 {experiences.closing.guideLabel}
                 <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
                   <path
@@ -179,7 +219,7 @@ export function Experiences() {
                     fill="none"
                   />
                 </svg>
-              </GuideFlipbook>
+              </button>
 
               <a
                 href={waHref}
@@ -194,6 +234,14 @@ export function Experiences() {
           </div>
         </Container>
       </section>
+
+      {bookPage !== null ? (
+        <GuideBook
+          book={guide}
+          initialPage={bookPage}
+          onClose={() => setBookPage(null)}
+        />
+      ) : null}
     </div>
   );
 }

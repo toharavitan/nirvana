@@ -14,9 +14,14 @@ import {
 } from "@leadstrikes/motion-engine";
 
 import { Container } from "@/components/ui/Container";
+import { Decor } from "@/components/ui/Decor";
+import { Botanical } from "@/components/ui/Botanical";
 import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
 import { image } from "@/content/media";
 import { essence } from "@/content/site";
+
+import decorDrawing from "@/assets/decor-decoration-drawing-svgrepo-com.svg";
+import rightLeaf from "@/assets/decor/colored_leaf.jpeg";
 
 /**
  * The first moment of stillness after the scroll-driven arrival.
@@ -75,8 +80,25 @@ export function Essence() {
   }, { scope });
 
   return (
-    <section ref={scope} className="bg-bone py-28 sm:py-40" id="story">
-      <Container width="wide">
+    <section
+      ref={scope}
+      className="relative overflow-hidden bg-bone py-28 sm:py-40"
+      id="story"
+    >
+      <Decor
+        src={decorDrawing}
+        className="-bottom-24 -left-24 size-[500px] sm:size-[600px]"
+        color="var(--color-teak)"
+        opacity={0.05}
+      />
+      {/* A leaf sprig anchored to the bottom-right of the section (blended so
+          its white background drops away), on every device. */}
+      <Botanical
+        src={rightLeaf}
+        className="-bottom-8 -right-4 w-28 sm:-right-6 sm:w-36 lg:w-44 xl:-right-8 xl:w-52"
+        opacity={0.85}
+      />
+      <Container width="wide" className="relative z-10">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
           <div className="relative lg:col-span-5 lg:sticky lg:top-32 lg:self-start">
             <span
@@ -161,7 +183,7 @@ export function Essence() {
               </div>
             </div>
 
-            <figcaption className="mt-4 flex items-baseline justify-between gap-6 font-sans text-[0.65rem] uppercase tracking-[0.22em] text-stone">
+            <figcaption className="mt-4 flex items-baseline justify-between gap-6 font-sans text-[0.65rem] uppercase tracking-[0.22em] text-stone lg:mt-14">
               <span>{essence.caption}</span>
               <span aria-hidden className="hidden sm:block">
                 Fig. 01
