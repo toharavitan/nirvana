@@ -5,6 +5,7 @@ import { GuideFlipbook } from "@/components/ui/GuideFlipbook";
 import { manual, nav, site } from "@/content/site";
 
 import nirvanaLogo from "@/assets/nirvana-logo.png";
+import leadstrikesIcon from "@/assets/leadstrikes-icon.svg";
 
 /**
  * The colophon. The wordmark runs at plate scale — the last thing the visitor
@@ -123,9 +124,33 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="mt-16 border-t border-bone/10 pt-8 font-sans text-xs font-light text-bone/30">
-          © {new Date().getFullYear()} {site.fullName}. All rights reserved.
-        </p>
+        <div className="mt-16 flex flex-col gap-4 border-t border-bone/10 pt-8 font-sans text-xs font-light text-bone/30 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {site.fullName}. All rights reserved.
+          </p>
+
+          {/* Operator credit — LeadStrikes. The mark carries its own dark tile,
+              so it sits cleanly on the ink footer. */}
+          <a
+            href="https://leadstrikes.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 transition-colors hover:text-bone/70"
+          >
+            <span className="uppercase tracking-[0.18em]">
+              Proudly operated by
+            </span>
+            <Image
+              src={leadstrikesIcon}
+              alt=""
+              aria-hidden
+              className="h-5 w-5"
+            />
+            <span className="font-medium tracking-[0.06em] text-bone/60 transition-colors group-hover:text-bone">
+              LeadStrikes
+            </span>
+          </a>
+        </div>
       </Container>
     </footer>
   );

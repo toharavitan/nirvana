@@ -22,8 +22,9 @@ type View = "map" | "street";
 
 /**
  * The location, on a live Google map — with a toggle to drop into Street View.
- * Uses the key-free classic embeds. TODO(client): once the villas' exact
- * coordinates are set in site.ts, both views update automatically.
+ * Uses the key-free classic embeds, fully interactive (zoom/pan), with Google's
+ * own marker. A custom branded pin isn't possible on the classic embed without
+ * the keyed Maps JavaScript API, so this keeps Google's default marker.
  */
 export function LocationMap() {
   const scope = useRef<HTMLDivElement>(null);

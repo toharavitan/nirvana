@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Poppins } from "next/font/google";
+import Script from "next/script";
 
 import { SmoothScrollProvider } from "@leadstrikes/motion-engine";
 
 import { reviews, site, villas } from "@/content/site";
 
 import "./globals.css";
+
+// Cloudflare Web Analytics — privacy-friendly and cookieless (no consent
+// banner needed). Set NEXT_PUBLIC_CF_BEACON_TOKEN to the site token from the
+// Cloudflare dashboard (Analytics & Logs → Web Analytics) to switch it on;
+// with no token set, nothing loads. See .env.example.
+const cfBeaconToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -198,6 +205,15 @@ export default function RootLayout({
       </head>
       <body className="bg-bone text-ink">
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
+
+        {/* Cloudflare Web Analytics beacon — loads only when a token is set. */}
+        {cfBeaconToken ? (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            strategy="afterInteractive"
+            data-cf-beacon={`{"token": "${cfBeaconToken}"}`}
+          />
+        ) : null}
       </body>
     </html>
   );
