@@ -1,0 +1,211 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+/*
+  Rector — the display face used on the Sendero site (rector-regular). It is a
+  licensed commercial font, so it is NOT bundled here: drop the real files into
+  /public/fonts/ (rector-regular.woff2 + rector-regular.woff) and this rule
+  picks them up. Until then, image-section titles fall back to a generic serif
+  (deliberately NOT a lookalike substitute).
+*/
+@font-face {
+  font-family: "rector-regular";
+  src:
+    url("/fonts/Rector.woff2") format("woff2"),
+    url("/fonts/Rector.woff") format("woff"),
+    url("/fonts/Rector.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+  Image-section title, to the exact spec of the original Sendero heading:
+  Rector, weight 400, 52px, white, centred, capped at 650px — and 6vw on
+  phones (below 768px).
+*/
+.rector-title {
+  font-family: "rector-regular", serif;
+  font-weight: 400;
+  font-size: 52px;
+  line-height: 1.1;
+  color: #ffffff;
+  text-align: center;
+  max-width: 650px;
+  margin-inline: auto;
+}
+
+@media (max-width: 767px) {
+  .rector-title {
+    font-size: 6vw;
+  }
+}
+
+/*
+  Palette drawn from the property itself rather than invented: the limestone
+  paving and stucco walls, the near-black slatted fencing, the teak ceilings,
+  and the pool as the single saturated accent. Nothing here is brighter than
+  the photography, which is the point — the site frames the images, it does not
+  compete with them.
+*/
+@theme inline {
+  /* TEST: pure white background instead of the cream bone (#f6f3ee). */
+  --color-bone: #ffffff;
+  --color-sand: #e7dfd4;
+  --color-limestone: #d5cabb;
+  --color-stone: #a2968a;
+  --color-clay: #7d7267;
+
+  --color-ink: #14191a;
+  --color-ink-soft: #232a2b;
+  --color-slate-deep: #2f3839;
+
+  --color-teak: #a86a2c;
+  --color-teak-light: #c98f4f;
+
+  --color-lagoon: #2f93a8;
+
+  /*
+    WhatsApp's own green, deliberately outside the house palette. The button
+    borrows the platform's recognition, and recognition is the colour — a
+    tasteful ink version of it is just an unfamiliar circle.
+  */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-deep: #1da851;
+
+  --font-display: var(--font-cormorant);
+  --font-sans: var(--font-poppins);
+  /* Section headers use Rector (loaded via @font-face above). */
+  --font-rector: "rector-regular", ui-serif, serif;
+
+  /* Editorial scale. Fluid so the type never needs breakpoint babysitting. */
+  --text-display: clamp(3rem, 11vw, 10rem);
+  --text-headline: clamp(2.5rem, 6vw, 5.25rem);
+  --text-title: clamp(1.75rem, 3vw, 2.75rem);
+  --text-lead: clamp(1.125rem, 1.5vw, 1.4rem);
+}
+
+:root {
+  --background: var(--color-bone);
+  --foreground: var(--color-ink);
+}
+
+html {
+  /*
+    Lenis drives scrolling. Native smooth behaviour on top of it fights the
+    engine and produces a double-easing wobble on anchor jumps.
+  */
+  scroll-behavior: auto;
+  background-color: var(--color-ink);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  /* Removes the ~300ms tap delay mobile browsers add while waiting to see if
+     a tap becomes a double-tap zoom. Safe site-wide: nothing here depends on
+     double-tap-to-zoom, and Lenis already owns pinch/scroll gestures. */
+  touch-action: manipulation;
+}
+
+::selection {
+  background: var(--color-teak);
+  color: var(--color-bone);
+}
+
+/* Chrome to match the page: a quiet clay thumb on the page ground. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-clay) 55%, transparent)
+    transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bone);
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-clay) 55%, transparent);
+  border-radius: 5px;
+  border: 2px solid var(--color-bone);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-teak);
+}
+
+/*
+  Reveal primitives set autoAlpha, which only takes effect once GSAP runs. On a
+  slow first paint the un-animated content would flash at full opacity first, so
+  anything marked as an entrance target starts hidden and is handed over to the
+  engine. Guarded by .js so it can never permanently hide content if the bundle
+  fails to load.
+*/
+.js [data-reveal] {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    visibility: visible;
+  }
+}
+
+/* Thin, quiet rule used to separate editorial blocks. */
+.hairline {
+  border-color: color-mix(in srgb, var(--color-clay) 28%, transparent);
+}
+
+/*
+  A single fixed grain field over the whole page. The same dithering that
+  keeps the hero footage from banding gives the flat bone sections the tooth
+  of uncoated paper — the difference between a screen and a printed page.
+  One compositor layer, pointer-transparent, cheap.
+*/
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/*
+  Oversized outline numerals in the margins — drawing-sheet notation, not
+  decoration. Stroked rather than filled so they sit behind the content as
+  linework and never compete with photography.
+*/
+.ghost-numeral {
+  font-family: var(--font-cormorant);
+  font-weight: 300;
+  font-size: clamp(7rem, 16vw, 15rem);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--color-ink) 15%, transparent);
+  user-select: none;
+  pointer-events: none;
+}
+
+.ghost-numeral--light {
+  -webkit-text-stroke-color: color-mix(in srgb, var(--color-bone) 22%, transparent);
+}
+
+/* The concierge guide's page-turning book fills its measured slot. */
+.guide-leaf {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+

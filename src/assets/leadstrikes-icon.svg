@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!--
+    Favicon. The chevron only — the wordmark and the cursor bar are illegible
+    at the ~16px Google actually renders, and a mark that turns to mush at small
+    size is worse than a simpler one.
+
+    Midnight ground rather than cream: a search results page is white, so a dark
+    tile separates from it. Sun yellow over orange for the stroke — 14.7:1
+    against the ground versus orange's 5.5:1, and contrast is most of what
+    survives at this size.
+  -->
+  <rect width="64" height="64" rx="14" fill="#050618"/>
+  <path d="M24,17 L40,32 L24,47"
+        stroke="#FDD970"
+        stroke-width="8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+</svg>

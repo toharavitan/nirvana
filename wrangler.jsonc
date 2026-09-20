@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Must match the Worker name Cloudflare's Git integration created
+  // (which follows the repo name) — a mismatch here makes every deploy
+  // open a reconciliation PR against the repo instead of just deploying.
+  "name": "nirvana",
+  "main": ".open-next/worker.js",
+  // A fixed past date, not "today" — Cloudflare's deploy API validates this
+  // against its own real clock and rejects anything it considers future,
+  // which ruled out using the actual current date here.
+  "compatibility_date": "2024-09-23",
+  // Required: the /api/inquiry route runs under the Next.js "nodejs" runtime
+  // (it uses node:fs/promises for a best-effort local mirror of bookings).
+  // This flag is what makes those Node built-ins resolve on Workers at all —
+  // without it the route fails to load, not just the fs calls inside it.
+  "compatibility_flags": ["nodejs_compat"],
+  // OpenNext copies every string in the Worker env into process.env before
+  // the request is handled, so these reach the route the same way a .env file
+  // would locally. .env.local is gitignored and never ships, which makes this
+  // the only source of production configuration.
+  //
+  // The URL lives here rather than in a secret because it is an address, not
+  // a credential — the gate is the JWT signed in /api/inquiry. That does mean
+  // the endpoint is publicly known (this repo is public), so the n8n webhook
+  // node must have JWT Auth enabled or anyone can post into the workflow.
+  "vars": {
+    "INQUIRY_WEBHOOK_URL": "https://n8n.leadstrikes.com/webhook/nirvana-booking"
+  },
+  // INQUIRY_WEBHOOK_JWT_SECRET is deliberately absent: it is a real secret and
+  // this file is committed. Set it once with:
+  //   npx wrangler secret put INQUIRY_WEBHOOK_JWT_SECRET
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
