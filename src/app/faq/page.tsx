@@ -64,10 +64,10 @@ const FAQS: { q: string; a: string }[] = [
   {
     q: "How do I book a stay at Nirvana Villas?",
     a:
-      "You can request dates through the reservation page on this website, " +
-      `book directly on our Airbnb listing, email us at ${site.contact.email}, ` +
-      `or message us on WhatsApp at ${site.contact.phone}. We are happy to ` +
-      "help you choose the right villa for your group.",
+      "You can book directly on our Airbnb listing, email us at " +
+      `${site.contact.email}, or message us on WhatsApp at ` +
+      `${site.contact.phone}. We are happy to help you choose the right villa ` +
+      "for your group.",
   },
   {
     q: "How far is the beach?",

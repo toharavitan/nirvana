@@ -143,14 +143,19 @@ const lodgingJsonLd = {
   containsPlace: villas.map((v) => ({
     "@type": "Accommodation",
     name: v.name,
-    url: `${site.url}/villas/${v.slug}`,
+    // Shrunk site: all villas share the single /villas page.
+    url: `${site.url}/villas`,
     accommodationCategory: "Villa",
     numberOfBedrooms: 3,
-    occupancy: { "@type": "QuantitativeValue", maxValue: 6, unitText: "guests" },
+    occupancy: {
+      "@type": "QuantitativeValue",
+      maxValue: v.guests,
+      unitText: "guests",
+    },
   })),
   potentialAction: {
     "@type": "ReserveAction",
-    target: `${site.url}/reservation`,
+    target: site.contact.airbnb,
     name: "Book your stay",
   },
   sameAs: [site.contact.airbnb],

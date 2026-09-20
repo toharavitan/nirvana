@@ -1,8 +1,7 @@
 import Image from "next/image";
 
 import { Container } from "@/components/ui/Container";
-import { GuideFlipbook } from "@/components/ui/GuideFlipbook";
-import { manual, nav, site } from "@/content/site";
+import { nav, site } from "@/content/site";
 
 import nirvanaLogo from "@/assets/nirvana-logo.png";
 import leadstrikesIcon from "@/assets/leadstrikes-icon.svg";
@@ -42,8 +41,6 @@ export function SiteFooter() {
             <ul className="mt-4 flex flex-col gap-2 font-sans text-sm font-light text-bone/60">
               {[
                 { label: "FAQ", href: "/faq" },
-                { label: "Terms & Conditions", href: "/terms" },
-                { label: "Privacy Policy", href: "/privacy" },
                 { label: "Accessibility", href: "/accessibility" },
               ].map((page) => (
                 <li key={page.href}>
@@ -55,15 +52,6 @@ export function SiteFooter() {
                   </a>
                 </li>
               ))}
-              <li>
-                {/* Opens the House Manual as an on-site flip-book. */}
-                <GuideFlipbook
-                  book={manual}
-                  className="w-fit cursor-pointer text-left transition-colors hover:text-bone"
-                >
-                  House Manual
-                </GuideFlipbook>
-              </li>
             </ul>
           </div>
 

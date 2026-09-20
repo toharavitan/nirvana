@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
 
 import {
@@ -11,11 +10,15 @@ import {
   useGSAPAnimation,
 } from "@leadstrikes/motion-engine";
 
+import { site } from "@/content/site";
+
 /**
  * The slower of the two persistent actions: a calendar that takes the visitor
- * to the inquiry form. Ink and bone rather than a third-party green — it
- * belongs to the house, not to a messaging app. The label slides in a beat
- * after the icon, the way a concierge waits for you to look up.
+ * to the Airbnb listing to check dates. Ink and bone rather than a third-party
+ * green — it belongs to the house, not to a messaging app. The label slides in
+ * a beat after the icon, the way a concierge waits for you to look up.
+ *
+ * (Shrunk site: there is no on-site reservation page, so this opens Airbnb.)
  *
  * Positioning belongs to FloatingActions, which stacks this under the
  * WhatsApp button.
@@ -40,9 +43,11 @@ export function AvailabilityButton() {
 
   return (
     <div ref={scope}>
-      <Link
-        href="/reservation"
-        aria-label="Check availability"
+      <a
+        href={site.contact.airbnb}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Check availability on Airbnb"
         className="group flex cursor-pointer items-center gap-3"
       >
         <span
@@ -69,7 +74,7 @@ export function AvailabilityButton() {
             <path d="M16 3v4M8 3v4M3.5 11h17" />
           </svg>
         </span>
-      </Link>
+      </a>
     </div>
   );
 }

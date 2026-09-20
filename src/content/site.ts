@@ -23,8 +23,7 @@ export const site = {
     "spirit of Pura Vida.",
 
   // Canonical origin, used for metadata, canonical URLs and schema.org.
-  // TODO(client): confirm the live domain (inferred from the contact email).
-  url: "https://nirvanatamarindo.com",
+  url: "https://nirvana-villas.com",
 
   // Search keywords the brand should rank for — kept here so metadata and
   // structured data draw from one list.
@@ -551,15 +550,10 @@ export type NavItem = {
   menu?: readonly { label: string; href: string }[];
 };
 
+// Shrunk site: all villas live on one /villas page (no per-villa pages), and
+// the reservation page is gone — booking is the Airbnb "Book your stay" button.
 export const nav: readonly NavItem[] = [
-  {
-    label: "Villas",
-    href: "/villas",
-    menu: [
-      { label: "All villas", href: "/villas" },
-      ...villas.map((v) => ({ label: v.label, href: `/villas/${v.slug}` })),
-    ],
-  },
+  { label: "Villas", href: "/villas" },
   { label: "Experiences", href: "/experiences" },
-  { label: "Reservation", href: "/reservation" },
+  { label: "FAQ", href: "/faq" },
 ];
