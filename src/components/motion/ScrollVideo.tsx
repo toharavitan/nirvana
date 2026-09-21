@@ -259,7 +259,7 @@ export function ScrollVideo({
       {scrim ? (
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/20 to-ink/65"
+          className="absolute inset-0 bg-gradient-to-b from-ink/25 via-transparent to-ink/45"
         />
       ) : null}
 
@@ -275,7 +275,7 @@ export function ScrollVideo({
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(115% 115% at 50% 45%, transparent 60%, rgba(20,25,26,0.45) 100%)",
+            "radial-gradient(115% 115% at 50% 45%, transparent 68%, rgba(20,25,26,0.26) 100%)",
         }}
       />
       <div

@@ -172,10 +172,17 @@ export interface ScrollVideoSource {
  */
 const R2_MEDIA_BASE = "https://pub-4d4835c1f9de4a00b4b4f26a88a7db6a.r2.dev";
 
+// In development the renditions are served from /public/videos, so a locally
+// re-encoded, lighter file can be tested on localhost without re-uploading to
+// R2 first. In production they still come from R2 (the desktop file exceeds
+// Workers' 25MB static-asset limit, so it can't ship in the bundle).
+const MEDIA_BASE =
+  process.env.NODE_ENV === "production" ? R2_MEDIA_BASE : "/videos";
+
 export const VIDEO: Record<"journey", ScrollVideoSource> = {
   journey: {
-    desktop: `${R2_MEDIA_BASE}/journey-desktop.mp4`,
-    mobile: `${R2_MEDIA_BASE}/journey-mobile.mp4`,
+    desktop: `${MEDIA_BASE}/journey-desktop.mp4`,
+    mobile: `${MEDIA_BASE}/journey-mobile.mp4`,
     poster: "/videos/journey-poster.webp",
     duration: 39.75,
     description:

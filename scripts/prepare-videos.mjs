@@ -95,10 +95,14 @@ const ASPECT = 2155 / 1325;
  * across, and every frame is refreshed from scratch.
  */
 const RENDITIONS = [
-  // 1920 at CRF 23: the clip renders full-bleed on 2.5K displays, where the
-  // previous 1600/27 encode read as soft and blocky in the palm fronds.
-  { suffix: "desktop", width: 1920, crf: 23 },
-  { suffix: "mobile", width: 1080, crf: 26 },
+  // Resolution stays at 1920 (full-bleed on 2.5K displays). To make the file
+  // lighter WITHOUT dropping resolution, CRF is raised: with all-intra there is
+  // no inter-frame artifact accumulation, so a higher CRF at 1920 stays clean
+  // while cutting the bitrate — and a smaller file is what removes the network
+  // stall at the very start of the scroll. If palm fronds read soft, step CRF
+  // back toward 25; for a smaller file still, push toward 29.
+  { suffix: "desktop", width: 1920, crf: 27 },
+  { suffix: "mobile", width: 1080, crf: 28 },
 ];
 
 /** ffmpeg needs even dimensions for yuv420p. */

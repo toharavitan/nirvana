@@ -251,7 +251,7 @@ export const experiences = {
   // The concierge introduces the page before the menu of experiences.
   concierge: {
     eyebrow: "Nirvana Concierge",
-    headline: "More than a service — a personal touch to your stay.",
+    headline: "More than a service, a personal touch to your stay.",
     body: [
       "Our Nirvana Concierge is here to help you experience the very best of " +
         "Tamarindo and Costa Rica, taking care of the details so you can simply " +
