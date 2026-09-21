@@ -3,6 +3,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Location } from "@/components/sections/Location";
 import { LocationMap } from "@/components/sections/LocationMap";
 import { Moments } from "@/components/sections/Moments";
+import { Shoreline } from "@/components/sections/Shoreline";
 import { SiteFooter } from "@/components/sections/SiteFooter";
 import { FloatingActions } from "@/components/ui/FloatingActions";
 import { SiteNav } from "@/components/ui/SiteNav";
@@ -33,6 +34,7 @@ export default function Home() {
         <Hero />
         <Essence />
         <Moments />
+        <Shoreline />
         <Location />
         <LocationMap />
       </main>
