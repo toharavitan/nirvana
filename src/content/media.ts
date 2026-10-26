@@ -168,6 +168,54 @@ export function villaGallery(slug: string, label: string): SiteImage[] {
   }));
 }
 
+/**
+ * Which photo belongs under each room chapter, curated by eye per villa so the
+ * "About the villas" section shows the bedroom under "The bedrooms", the
+ * kitchen under "The kitchen", and so on — the delivered files carry no room
+ * labels, so this map is hand-picked. Each pair is [main, detail] as the NN
+ * index of that villa's photo (1-based, matching the NN.webp filenames), in the
+ * chapter order defined in content/site.ts: bedrooms, living room, kitchen, pool.
+ */
+const VILLA_CHAPTERS: Record<string, [number, number][]> = {
+  "villa-01": [[7, 14], [29, 30], [26, 27], [32, 37]],
+  "villa-02": [[8, 21], [34, 33], [39, 37], [45, 44]],
+  "villa-03": [[9, 27], [18, 36], [16, 17], [15, 3]],
+  "villa-04": [[11, 6], [33, 32], [21, 22], [2, 3]],
+  "villa-05": [[4, 8], [18, 19], [16, 17], [22, 23]],
+};
+
+/** Room label per chapter, in the same order as the pairs above. */
+const CHAPTER_ROOM = ["bedroom", "living room", "kitchen", "pool"] as const;
+
+/**
+ * The curated main + detail photo for each room chapter of a villa. Returns []
+ * for a villa with no curated map (e.g. Almendro), so the section falls back to
+ * the shared house images.
+ */
+export function villaChapters(
+  slug: string,
+  label: string,
+): { photo: SiteImage; detail: SiteImage }[] {
+  const entry = VILLA_GALLERIES.get(slug);
+  const map = VILLA_CHAPTERS[slug];
+  if (!entry || !map) return [];
+
+  const pick = (nn: number, room: string): SiteImage => {
+    const img = entry.images[nn - 1];
+    return {
+      src: img.src,
+      width: img.width,
+      height: img.height,
+      alt: `The ${room} at ${label}, Nirvana Tamarindo`,
+    };
+  };
+
+  return map.map(([main, detail], i) => ({
+    photo: pick(main, CHAPTER_ROOM[i]),
+    detail: pick(detail, CHAPTER_ROOM[i]),
+  }));
+}
+
 // ---------------------------------------------------------------------------
 // Scroll-scrubbed video
 // ---------------------------------------------------------------------------

@@ -5,7 +5,6 @@ import { useRef } from "react";
 
 import {
   STAGGER,
-  imageReveal,
   parallax,
   reveal,
   textReveal,
@@ -37,29 +36,12 @@ const DETAILS: Record<string, ImageKey> = {
   "pool-palapa": "pool-daybed",
 };
 
-/**
- * Pick one main photo and one detail plate per chapter from a villa's own set,
- * spread across it so the four chapters don't open on four near-identical
- * frames. Falls back to the shared, named house images when a villa has no set
- * of its own (e.g. Almendro) or too few photos to fill the chapters.
- */
-function chapterImagesFrom(
-  photos: SiteImage[] | undefined,
-  chapters: typeof villa.chapters,
-): { photo: SiteImage; detail: SiteImage }[] {
-  const need = chapters.length * 2;
-
-  if (!photos || photos.length < need) {
-    return chapters.map((c) => ({
-      photo: image(c.image),
-      detail: image(DETAILS[c.image] ?? c.image),
-    }));
-  }
-
-  const step = Math.floor(photos.length / need);
-  return chapters.map((_, i) => ({
-    photo: photos[i * 2 * step],
-    detail: photos[(i * 2 + 1) * step],
+/** The shared, named house images — the fallback when a villa has no curated
+ *  per-room set of its own (home page, and Almendro). */
+function sharedChapterImages(): { photo: SiteImage; detail: SiteImage }[] {
+  return villa.chapters.map((c) => ({
+    photo: image(c.image),
+    detail: image(DETAILS[c.image] ?? c.image),
   }));
 }
 
@@ -76,10 +58,9 @@ function Chapter({ index, title, body, photo, detail }: ChapterProps) {
   const numeral = String(index + 1).padStart(2, "0");
 
   useGSAPAnimation(() => {
-    imageReveal(".chapter-image", {
-      direction: flipped ? "right" : "left",
-      scroll: true,
-    });
+    // The chapter photo shows outright — no reveal/exposure animation — so the
+    // room is visible the moment it scrolls in. It still drifts gently with the
+    // parallax below; only the fade-in "exposure" is disabled here.
     parallax(".chapter-image", { speed: 0.1 });
 
     // The detail plate drifts faster than the photograph beneath it; the
@@ -160,9 +141,16 @@ function Chapter({ index, title, body, photo, detail }: ChapterProps) {
   );
 }
 
-export function Villas({ photos }: { photos?: SiteImage[] } = {}) {
+export function Villas({
+  chapters,
+}: {
+  chapters?: { photo: SiteImage; detail: SiteImage }[];
+} = {}) {
   const scope = useRef<HTMLDivElement>(null);
-  const chapterImages = chapterImagesFrom(photos, villa.chapters);
+  const chapterImages =
+    chapters && chapters.length === villa.chapters.length
+      ? chapters
+      : sharedChapterImages();
 
   useGSAPAnimation(() => {
     const cleanup = textReveal(".villas-headline", { split: "lines", scroll: true });

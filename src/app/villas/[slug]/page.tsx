@@ -11,7 +11,7 @@ import { Container } from "@/components/ui/Container";
 import { Eyebrow, Headline } from "@/components/ui/Typography";
 import { FloatingActions } from "@/components/ui/FloatingActions";
 import { SiteNav } from "@/components/ui/SiteNav";
-import { villaGallery } from "@/content/media";
+import { villaChapters, villaGallery } from "@/content/media";
 import { reviews, site, villas } from "@/content/site";
 
 import butterfly from "@/assets/decor/butterfly.jpeg";
@@ -61,6 +61,9 @@ export default async function VillaPage({
   // This villa's own photography; empty for a villa without a set yet
   // (Almendro), where <Gallery /> falls back to the shared house set.
   const gallery = villaGallery(villa.slug, villa.name);
+  // Curated room-by-room photos for the About-the-villas chapters, so each
+  // caption ("The kitchen", "The pool") sits with the matching photo.
+  const chapters = villaChapters(villa.slug, villa.name);
 
   const url = `${site.url}/villas/${villa.slug}`;
   const villaJsonLd = {
@@ -158,7 +161,7 @@ export default async function VillaPage({
           </Container>
         </section>
 
-        <Villas photos={gallery} />
+        <Villas chapters={chapters} />
         <Details />
         <Gallery photos={gallery} />
       </main>
