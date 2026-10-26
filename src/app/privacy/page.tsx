@@ -65,10 +65,13 @@ const SECTIONS = [
   {
     heading: "Cookies & analytics",
     body:
-      "This website does not set advertising or cross-site tracking cookies. " +
-      "Your browser may store small preferences needed for the site to work. " +
-      "TODO(client): update this section if analytics or marketing tools are " +
-      "added later.",
+      "This website does not set advertising or cross-site tracking cookies, " +
+      "and our own visitor analytics are cookieless. Your browser may store " +
+      "small preferences needed for the site to work. The interactive location " +
+      "map is provided by Google Maps and only loads after you choose to load " +
+      "it; doing so may set Google's own cookies, so we leave that choice to " +
+      "you. TODO(client): update this section if analytics or marketing tools " +
+      "are added later.",
   },
   {
     heading: "Data retention",
