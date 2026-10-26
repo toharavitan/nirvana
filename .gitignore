@@ -63,3 +63,6 @@ cloudflare-env.d.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Raw image/source archives — never commit (optimized output lives in public/images)
+*.zip
