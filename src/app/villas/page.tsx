@@ -10,8 +10,14 @@ import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
 import { Decor } from "@/components/ui/Decor";
 import { FloatingActions } from "@/components/ui/FloatingActions";
 import { SiteNav } from "@/components/ui/SiteNav";
-import { image } from "@/content/media";
+import { image, villaGallery } from "@/content/media";
 import { villas } from "@/content/site";
+
+// The single villas page shows the real photography: each card leads with that
+// villa's own first photo, and the gallery at the foot of the page draws a
+// handful from every villa's set so the whole collection is represented.
+const VILLA_SETS = villas.map((v) => ({ villa: v, photos: villaGallery(v.slug, v.name) }));
+const PAGE_GALLERY = VILLA_SETS.flatMap(({ photos }) => photos.slice(0, 6));
 
 import decorBlossom from "@/assets/art-background-blossom-svgrepo-com.svg";
 
@@ -60,8 +66,10 @@ export default function VillasPage() {
         <section className="bg-bone pb-24 sm:pb-32">
           <Container width="wide">
             <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-              {villas.map((villa) => {
-                const photo = image(villa.image);
+              {VILLA_SETS.map(({ villa, photos }) => {
+                // This villa's own lead photo; fall back to the shared named
+                // image for a villa without a gallery yet (Almendro).
+                const photo = photos[0] ?? image(villa.image);
                 return (
                   <li key={villa.slug}>
                     <figure className="group relative aspect-[4/5] w-full overflow-hidden bg-limestone">
@@ -117,7 +125,7 @@ export default function VillasPage() {
             now shown once on the single villas page. */}
         <Villas />
         <Details />
-        <Gallery />
+        <Gallery photos={PAGE_GALLERY} />
       </main>
 
       <SiteFooter />

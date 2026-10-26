@@ -135,6 +135,40 @@ export function image(key: ImageKey): SiteImage {
 }
 
 // ---------------------------------------------------------------------------
+// Per-villa galleries
+// ---------------------------------------------------------------------------
+
+import villaGalleries from "./villa-galleries.json";
+
+interface VillaGalleryEntry {
+  slug: string;
+  images: { src: string; width: number; height: number }[];
+}
+
+const VILLA_GALLERIES = new Map(
+  (villaGalleries as VillaGalleryEntry[]).map((entry) => [entry.slug, entry]),
+);
+
+/**
+ * The photographs for one villa, as delivered by the client and encoded by
+ * `scripts/prepare-villa-galleries.mjs`. Alt text is generic per villa — the
+ * set is one villa's rooms, pool and terraces — which is enough for assistive
+ * tech without a hand-written line per frame. Returns [] for a villa with no
+ * gallery yet (e.g. Almendro), so callers can fall back to the shared set.
+ */
+export function villaGallery(slug: string, label: string): SiteImage[] {
+  const entry = VILLA_GALLERIES.get(slug);
+  if (!entry) return [];
+
+  return entry.images.map((img, i) => ({
+    src: img.src,
+    width: img.width,
+    height: img.height,
+    alt: `${label} at Nirvana Tamarindo — view ${i + 1}`,
+  }));
+}
+
+// ---------------------------------------------------------------------------
 // Scroll-scrubbed video
 // ---------------------------------------------------------------------------
 
