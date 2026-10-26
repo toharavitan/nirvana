@@ -48,12 +48,44 @@ const RIGHT: ImageKey[] = [
   "bedroom-window-seat",
 ];
 
-export function Gallery() {
+/**
+ * Split an arbitrary villa photo set into the three columns the layout wants:
+ * three images for the sticky centre, the rest dealt left/right alternately so
+ * both scrolling columns stay roughly even however many photos a villa has.
+ * The sticky trio is taken spread across the set rather than off the top, so
+ * the lingering frames aren't three near-identical opening shots.
+ */
+function splitForLayout(photos: SiteImage[]) {
+  if (photos.length <= 3) {
+    return { left: photos, sticky: photos.slice(0, 3), right: [] as SiteImage[] };
+  }
+  const last = photos.length - 1;
+  const stickyIdx = new Set([0, Math.floor(last / 2), last]);
+  const sticky = [...stickyIdx].map((i) => photos[i]);
+
+  const rest = photos.filter((_, i) => !stickyIdx.has(i));
+  const left: SiteImage[] = [];
+  const right: SiteImage[] = [];
+  rest.forEach((photo, i) => (i % 2 === 0 ? left : right).push(photo));
+  return { left, sticky, right };
+}
+
+/**
+ * The property gallery. With no `photos` it shows the shared, named house set
+ * (home page); given a villa's own photo set it lays those out instead — one
+ * gallery per villa, same sticky-column composition.
+ */
+export function Gallery({ photos }: { photos?: SiteImage[] } = {}) {
   const scope = useRef<HTMLDivElement>(null);
 
-  const left = LEFT.map((key) => image(key));
-  const sticky = STICKY.map((key) => image(key));
-  const right = RIGHT.map((key) => image(key));
+  const perVilla = photos && photos.length > 0;
+  const { left, sticky, right } = perVilla
+    ? splitForLayout(photos)
+    : {
+        left: LEFT.map((key) => image(key)),
+        sticky: STICKY.map((key) => image(key)),
+        right: RIGHT.map((key) => image(key)),
+      };
 
   useGSAPAnimation(() => {
     const cleanup = textReveal(".gallery-headline", { split: "lines", scroll: true });
@@ -78,7 +110,7 @@ export function Gallery() {
         <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-12">
           <div className="col-span-2 grid gap-2 sm:gap-4 lg:col-span-4">
             {left.map((photo) => (
-              <GalleryTile key={photo.src} photo={photo} />
+              <GalleryTile key={photo.src} photo={photo} showCaption={!perVilla} />
             ))}
           </div>
 
@@ -91,18 +123,18 @@ export function Gallery() {
           */}
           <div className="col-span-4 top-4 hidden h-[calc(100svh-2rem)] grid-rows-3 gap-4 sm:top-6 sm:h-[calc(100svh-3rem)] lg:sticky lg:grid">
             {sticky.map((photo) => (
-              <GalleryTile key={photo.src} photo={photo} fill />
+              <GalleryTile key={photo.src} photo={photo} fill showCaption={!perVilla} />
             ))}
           </div>
 
           <div className="col-span-2 grid gap-2 sm:gap-4 lg:col-span-4">
             {right.map((photo) => (
-              <GalleryTile key={photo.src} photo={photo} />
+              <GalleryTile key={photo.src} photo={photo} showCaption={!perVilla} />
             ))}
             {/* The trio only the sticky column shows on large screens. */}
             <div className="grid gap-2 sm:gap-4 lg:hidden">
               {sticky.map((photo) => (
-                <GalleryTile key={`m-${photo.src}`} photo={photo} />
+                <GalleryTile key={`m-${photo.src}`} photo={photo} showCaption={!perVilla} />
               ))}
             </div>
           </div>
@@ -121,12 +153,21 @@ export function Gallery() {
  * parent's height — used only inside the sticky column, whose rows are
  * already sized by the grid.
  */
-function GalleryTile({ photo, fill = false }: { photo: SiteImage; fill?: boolean }) {
+function GalleryTile({
+  photo,
+  fill = false,
+  showCaption = true,
+}: {
+  photo: SiteImage;
+  fill?: boolean;
+  showCaption?: boolean;
+}) {
   const [loaded, setLoaded] = useState(false);
 
   // The first clause of the alt text doubles as a plate caption —
-  // content-true, and written once.
-  const caption = photo.alt.split(/[,—]/)[0];
+  // content-true, and written once. A villa gallery suppresses it: the same
+  // villa name on every frame is noise, not information.
+  const caption = showCaption ? photo.alt.split(/[,—]/)[0] : null;
 
   return (
     <figure
@@ -152,12 +193,14 @@ function GalleryTile({ photo, fill = false }: { photo: SiteImage; fill?: boolean
         informational, not a primary action, so "always visible" is the
         correct touch fallback rather than a tap handler.
       */}
-      <figcaption
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 to-transparent px-5 pb-4 pt-14 font-sans text-[0.65rem] uppercase tracking-[0.2em] text-bone opacity-0 transition-opacity duration-500 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
-      >
-        {caption}
-      </figcaption>
+      {caption ? (
+        <figcaption
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 to-transparent px-5 pb-4 pt-14 font-sans text-[0.65rem] uppercase tracking-[0.2em] text-bone opacity-0 transition-opacity duration-500 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+        >
+          {caption}
+        </figcaption>
+      ) : null}
     </figure>
   );
 }

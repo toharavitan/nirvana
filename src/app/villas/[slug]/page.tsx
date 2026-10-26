@@ -11,6 +11,7 @@ import { Container } from "@/components/ui/Container";
 import { Eyebrow, Headline } from "@/components/ui/Typography";
 import { FloatingActions } from "@/components/ui/FloatingActions";
 import { SiteNav } from "@/components/ui/SiteNav";
+import { villaGallery } from "@/content/media";
 import { reviews, site, villas } from "@/content/site";
 
 import butterfly from "@/assets/decor/butterfly.jpeg";
@@ -57,6 +58,10 @@ export default async function VillaPage({
   const villa = villas.find((v) => v.slug === slug);
   if (!villa) notFound();
 
+  // This villa's own photography; empty for a villa without a set yet
+  // (Almendro), where <Gallery /> falls back to the shared house set.
+  const gallery = villaGallery(villa.slug, villa.name);
+
   const url = `${site.url}/villas/${villa.slug}`;
   const villaJsonLd = {
     "@context": "https://schema.org",
@@ -64,7 +69,7 @@ export default async function VillaPage({
     "@id": `${url}#villa`,
     name: `${villa.name} — Nirvana Tamarindo`,
     url,
-    image: `${site.url}/images/${villa.image}.webp`,
+    image: `${site.url}${gallery[0]?.src ?? `/images/${villa.image}.webp`}`,
     description:
       `${villa.name}, a private luxury villa at Nirvana Tamarindo — its own ` +
       `pool, three bedrooms and a short walk to Playa Tamarindo.`,
@@ -155,7 +160,7 @@ export default async function VillaPage({
 
         <Villas />
         <Details />
-        <Gallery />
+        <Gallery photos={gallery} />
       </main>
 
       <SiteFooter />
