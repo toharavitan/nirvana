@@ -158,7 +158,7 @@ export default async function VillaPage({
           </Container>
         </section>
 
-        <Villas />
+        <Villas photos={gallery} />
         <Details />
         <Gallery photos={gallery} />
       </main>

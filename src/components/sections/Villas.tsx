@@ -14,15 +14,15 @@ import {
 
 import { Container } from "@/components/ui/Container";
 import { Eyebrow, Headline, Lead } from "@/components/ui/Typography";
-import { image, type ImageKey } from "@/content/media";
+import { image, type ImageKey, type SiteImage } from "@/content/media";
 import { villa } from "@/content/site";
 
 interface ChapterProps {
   index: number;
   title: string;
   body: string;
-  imageKey: ImageKey;
-  detailKey: ImageKey;
+  photo: SiteImage;
+  detail: SiteImage;
 }
 
 /**
@@ -38,16 +38,40 @@ const DETAILS: Record<string, ImageKey> = {
 };
 
 /**
+ * Pick one main photo and one detail plate per chapter from a villa's own set,
+ * spread across it so the four chapters don't open on four near-identical
+ * frames. Falls back to the shared, named house images when a villa has no set
+ * of its own (e.g. Almendro) or too few photos to fill the chapters.
+ */
+function chapterImagesFrom(
+  photos: SiteImage[] | undefined,
+  chapters: typeof villa.chapters,
+): { photo: SiteImage; detail: SiteImage }[] {
+  const need = chapters.length * 2;
+
+  if (!photos || photos.length < need) {
+    return chapters.map((c) => ({
+      photo: image(c.image),
+      detail: image(DETAILS[c.image] ?? c.image),
+    }));
+  }
+
+  const step = Math.floor(photos.length / need);
+  return chapters.map((_, i) => ({
+    photo: photos[i * 2 * step],
+    detail: photos[(i * 2 + 1) * step],
+  }));
+}
+
+/**
  * One room, one photograph, one thought.
  *
  * Chapters alternate sides down the page. The alternation is what stops four
  * near-identical blocks from reading as a list — the eye is handed across the
  * page rather than dropped down a column.
  */
-function Chapter({ index, title, body, imageKey, detailKey }: ChapterProps) {
+function Chapter({ index, title, body, photo, detail }: ChapterProps) {
   const scope = useRef<HTMLDivElement>(null);
-  const photo = image(imageKey);
-  const detail = image(detailKey);
   const flipped = index % 2 === 1;
   const numeral = String(index + 1).padStart(2, "0");
 
@@ -136,8 +160,9 @@ function Chapter({ index, title, body, imageKey, detailKey }: ChapterProps) {
   );
 }
 
-export function Villas() {
+export function Villas({ photos }: { photos?: SiteImage[] } = {}) {
   const scope = useRef<HTMLDivElement>(null);
+  const chapterImages = chapterImagesFrom(photos, villa.chapters);
 
   useGSAPAnimation(() => {
     const cleanup = textReveal(".villas-headline", { split: "lines", scroll: true });
@@ -173,8 +198,8 @@ export function Villas() {
               index={index}
               title={chapter.title}
               body={chapter.body}
-              imageKey={chapter.image}
-              detailKey={DETAILS[chapter.image] ?? chapter.image}
+              photo={chapterImages[index].photo}
+              detail={chapterImages[index].detail}
             />
           ))}
         </div>
